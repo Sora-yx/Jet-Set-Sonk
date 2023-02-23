@@ -8,3 +8,7 @@ extern HelperFunctions HelperFunctionsGlobal;
 void init_chrModel();
 void SonicJVList();
 void initAnims();
+void initSkatingEffects();
+
+
+#define TaskHook static FunctionHook<void, task*>

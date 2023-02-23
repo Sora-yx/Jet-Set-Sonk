@@ -15,6 +15,7 @@
 #include "ModelInfo.h"
 #include "AnimationFile.h"
 #include "IniFile.hpp"
+#include "FunctionHook.h"
 
 #include "mod.h"
 #include "util.h"

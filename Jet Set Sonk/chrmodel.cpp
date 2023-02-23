@@ -147,6 +147,7 @@ void init_chrModel()
 		replaceSonkActions();
 		ReplaceFaceMotion();
 		initAnims();
+		initSkatingEffects();
 		SonicJVList();
 	}
 

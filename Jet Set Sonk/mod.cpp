@@ -4,7 +4,6 @@ HelperFunctions HelperFunctionsGlobal;
 std::string modpath;
 std::string modName = "";
 
-
 extern "C" {
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
 	{	
