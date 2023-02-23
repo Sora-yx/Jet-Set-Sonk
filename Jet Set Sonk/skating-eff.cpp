@@ -98,14 +98,14 @@ void DrawSkatingEffects(playerwk* pwp)
 
 	njPushMatrix(rightToeMtx);
 	njRotateZ(0, rotZ);
-	auto v5 = skatingThrustMdls[rightToeNarrow]->getmodel();
+	auto rightToeObj = skatingThrustMdls[rightToeNarrow]->getmodel();
 
 	if ((FrameCounterUnpaused & 1) == 0)
 	{
-		v5 = skatingThrustMdls[rightToeWide]->getmodel();
+		rightToeObj = skatingThrustMdls[rightToeWide]->getmodel();
 	}
 
-	late_DrawObjectClipMesh(v5, LATE_LIG, 0.0f);
+	late_DrawObjectClipMesh(rightToeObj, LATE_LIG, 0.0f);
 	njPopMatrixEx();
 
 
@@ -116,27 +116,27 @@ void DrawSkatingEffects(playerwk* pwp)
 	njTranslateV(0, &offset);
 	njRotateZ(0, rotZ_);
 
-	auto v6 = skatingThrustMdls[leftHeelWide]->getmodel();
+	auto leftHeelObj = skatingThrustMdls[leftHeelWide]->getmodel();
 
 	if ((FrameCounterUnpaused & 1) == 0)
 	{
-		v6 = skatingThrustMdls[leftHeelNarrow]->getmodel();
+		leftHeelObj = skatingThrustMdls[leftHeelNarrow]->getmodel();
 	}
 
-	late_DrawObjectClipMesh(v6, LATE_LIG, 0.0f);
+	late_DrawObjectClipMesh(leftHeelObj, LATE_LIG, 0.0f);
 	njPopMatrixEx();
 
 	njPushMatrix(rightHeelMtx);
 	njTranslateV(0, &offset);
 	njRotateZ(0, rotZ_);
-	auto v7 = skatingThrustMdls[rightHeelWide]->getmodel();
+	auto rightHeelObj = skatingThrustMdls[rightHeelWide]->getmodel();
 
 	if ((FrameCounterUnpaused & 1) == 0)
 	{
-		v7 = skatingThrustMdls[rightHeelNarrow]->getmodel();
+		rightHeelObj = skatingThrustMdls[rightHeelNarrow]->getmodel();
 	}
 
-	late_DrawObjectClipMesh(v7, LATE_LIG, 0.0f);
+	late_DrawObjectClipMesh(rightHeelObj, LATE_LIG, 0.0f);
 	njPopMatrixEx();
 
 	___dsSetPalette(0);
