@@ -32,23 +32,6 @@ TaskHook SonicDisplay_t(SonicDisplay);
 
 void (*backupCallback)(NJS_OBJECT* obj) = NULL; 
 
-FunctionPointer(void, dsPushPopMotion, (NJS_OBJECT* obj), 0x004050C0);
-FunctionHook<void, NJS_OBJECT*> dsPushPopMotion_t(dsPushPopMotion);
-
-static Float _DrawModel_scl = 0.0f;
-
-bool isSkateObj(NJS_OBJECT* obj)
-{
-	for (uint8_t i = 0; i < LengthOfArray(skatingThrustMdls); i++)
-	{
-		if (obj == skatingThrustMdls[i]->getmodel())
-			return true;
-	}
-
-	return false;
-}
-
-
 static void SonkCallBack(NJS_OBJECT* obj)
 {
 	if (obj == SONIC_OBJECTS[root]->getnode(53) || obj == SONIC_OBJECTS[ss]->getnode(53) || obj == SONIC_OBJECTS[curled]->getnode(54)) //curled hierarchy is different
