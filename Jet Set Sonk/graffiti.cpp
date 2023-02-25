@@ -217,7 +217,6 @@ void tag_Disp(task* tp)
 	njRotateZ(0, twp->ang.z);
 	njRotateX(0, twp->ang.x);
 	njRotateY(0, twp->ang.y);
-
 	dsDrawObject(tagMdls[id]->getmodel());
 	njPopMatrix(1u);
 }
