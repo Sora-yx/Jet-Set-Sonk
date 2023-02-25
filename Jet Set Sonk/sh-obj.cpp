@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "objects.h"
 
-static NJS_TEXNAME graffitiTex[4]{ 0 };
+static NJS_TEXNAME graffitiTex[11]{ 0 };
 NJS_TEXLIST graffitiTexlist = { arrayptrandlength(graffitiTex) };
 
 PVMEntry SpeedHighwayObjectTextures[] = {

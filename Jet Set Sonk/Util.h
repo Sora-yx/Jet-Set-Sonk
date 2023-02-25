@@ -38,3 +38,4 @@ TaskFunc(SetFlagNoRespawn, 0x46C100);
 FunctionPointer(void, SetLookingPoint, (unsigned __int8 player, NJS_POINT3* a2), 0x441000);
 
 void ResetPlayerLook(char pnum);
+int GetUVCount(NJS_MESHSET_SADX* meshset);

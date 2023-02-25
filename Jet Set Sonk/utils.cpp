@@ -197,3 +197,31 @@ void ResetPlayerLook(char pnum)
 		p->ewp->look.obj = 0;
 	}
 }
+
+
+int GetUVCount(NJS_MESHSET_SADX* meshset) 
+{
+	switch (meshset->type_matId)
+	{
+	case NJD_MESHSET_3:
+		return meshset->nbMesh * 3;
+	case NJD_MESHSET_4:
+		return meshset->nbMesh * 4;
+	case NJD_MESHSET_N:
+	case NJD_MESHSET_TRIMESH:
+		int indices = 0;
+		int currentindex = 0;
+		int currentmesh = 0;
+
+		while (currentmesh < meshset->nbMesh) {
+			int numvrt = meshset->meshes[currentindex] & 0x7FFF;
+			indices += numvrt;
+			currentindex += numvrt + 1;
+			currentmesh++;
+		}
+
+		return indices;
+	}
+
+	return 0;
+}

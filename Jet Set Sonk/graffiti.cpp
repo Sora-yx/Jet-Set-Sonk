@@ -7,13 +7,49 @@ extern uint8_t sprayPaintCount[];
 uint8_t tagsLeft = 0;
 static bool isTag_ = false;
 
-#define tagDone 1
+enum //tag store data task 
+{
+	tagHP,
+	tagDone,
+	texID
+};
+
+enum //tag task enum
+{
+	init,
+	createChild,
+	checkInput,
+	wait,
+	done,
+};
+
+static uint8_t sprayNeeded[3]
+{
+	1, //small
+	3, //normal
+	6 //large
+};
 
 static void resetTagDataValues(taskwk* twp)
 {
-	twp->counter.b[2] = 0; //check if tag is done
-	twp->counter.b[1] = 0; //store pnum
-	twp->counter.b[0] = 0; //store tag HP (number of spray needed)
+	twp->counter.b[texID] = 0; //store texture ID
+	twp->counter.b[tagDone] = 0; //check if tag is done
+	twp->counter.b[tagHP] = 0; //store tag HP (number of spray needed)
+}
+
+static uint8_t getTagTexID(taskwk* twp)
+{
+	return twp->counter.b[texID];
+}
+
+static bool isTagDone(taskwk* twp)
+{
+	return twp->counter.b[tagDone];
+}
+
+static uint8_t getTagHP(taskwk* twp)
+{
+	return twp->counter.b[tagHP];
 }
 
 bool isTag()
@@ -36,7 +72,6 @@ void setNumberOfTagToDo()
 	tagsLeft = 0;
 	int id = 0;
 
-
 	for (int i = 0; i < setSize; i++)
 	{
 		id = Set[i].ObjectType & 0x7FFF;
@@ -50,22 +85,6 @@ void setNumberOfTagToDo()
 		}
 	}
 }
-
-enum //tag size
-{
-	init,
-	createChild,
-	checkInput,
-	wait,
-	done,
-};
-
-static uint8_t sprayNeeded[3]
-{
-	1,
-	3,
-	6
-};
 
 void ChildArrowDisp(task* tp)
 {
@@ -124,14 +143,14 @@ void DoGraffiti(char pnum, task* tp)
 		isTag_ = true;
 
 		sprayPaintCount[pnum]--;
-		twp->counter.b[0]++;
+		twp->counter.b[tagHP]++;
 
 		SetLookingPoint(pnum, &twp->pos);
 		p->ang.y = twp->ang.y;
 		ForcePlayerAction(0, 12);
 		PlayerLookAt(&p->pos, &twp->pos, 0, &p->ang.y);
 
-		char curHP = twp->counter.b[0];
+		char curHP = getTagHP(twp);
 
 		playerpwp[pnum]->mj.reqaction = 130;
 		PlayCustomSoundVolume(sprayPaintSnd, 2.0f);
@@ -139,12 +158,12 @@ void DoGraffiti(char pnum, task* tp)
 		if (curHP < hpMAX)
 		{
 			PlayCustomSoundVolume(smallTagSnd + curHP, 3.0f);
-			curHP = twp->counter.b[0];
+			curHP = getTagHP(twp);
 		}
 
-		if (twp->counter.b[0] >= hpMAX)
+		if (curHP >= hpMAX)
 		{
-			twp->counter.b[2] = tagDone; 
+			twp->counter.b[tagDone] = TRUE;
 			if (tp->ocp)
 			{
 				if (!SetCPFlag(tp))
@@ -153,11 +172,10 @@ void DoGraffiti(char pnum, task* tp)
 				}
 			}
 
-
 			tagsLeft--;
 		}
 
-		twp->mode = wait;			
+		twp->mode = wait;
 		return;
 	}
 	else
@@ -173,7 +191,6 @@ void CheckGraffitiInput(task* tp, NJS_POINT3 pos, char pnum)
 	{
 		if (Controllers[pnum].PressedButtons & Buttons_Y)
 		{
-			tp->twp->counter.b[1] = pnum;
 			playertwp[pnum]->flag |= Status_DoNextAction;
 			playertwp[pnum]->smode = 20;
 			DoGraffiti(pnum, tp);
@@ -185,16 +202,22 @@ void tag_Disp(task* tp)
 {
 	auto twp = tp->twp;
 
-	if (MissedFrames || twp->mode < done)
+	if (MissedFrames || twp->mode < checkInput || !isTagDone(twp) && getTagHP(twp) <= 0)
 		return;
 
-	char id = static_cast<int>(twp->scl.x);
+	const char id = static_cast<int>(twp->scl.x);
+	char texID = getTagTexID(twp);
+	NJS_MODEL_SADX* mdl = (NJS_MODEL_SADX*)tagMdls[id]->getmodel()->model;
+
+	mdl->mats[0].attr_texId = texID - (sprayNeeded[id]) + getTagHP(twp);
+
 	njSetTexture(&graffitiTexlist);
 	njPushMatrix(0);
 	njTranslateV(0, &twp->pos);
 	njRotateZ(0, twp->ang.z);
 	njRotateX(0, twp->ang.x);
 	njRotateY(0, twp->ang.y);
+
 	dsDrawObject(tagMdls[id]->getmodel());
 	njPopMatrix(1u);
 }
@@ -208,9 +231,11 @@ void tag_Exec(task* tp)
 	DisplayDebugStringFormatted(NJM_LOCATION(2, 2), "Tags Left: %d", tagsLeft);
 
 	auto twp = tp->twp;
-	taskwk* player = nullptr;
+	const char id = static_cast<int>(twp->scl.x);
 	char pnum = GetTheNearestPlayerNumber(&twp->pos);
-	const char hpMAX = sprayNeeded[static_cast<int>(twp->scl.x)];
+	const char hpMAX = sprayNeeded[id];
+	NJS_MODEL_SADX* mdl = (NJS_MODEL_SADX*)tagMdls[id]->getmodel()->model;
+
 
 	switch (twp->mode)
 	{
@@ -227,6 +252,7 @@ void tag_Exec(task* tp)
 		if (!SetCPFlag(tp))
 		{
 			resetTagDataValues(twp);
+			twp->counter.b[texID] = mdl->mats[0].attr_texId; //save tag tex id
 			twp->mode = createChild;
 		}
 		else
@@ -241,9 +267,10 @@ void tag_Exec(task* tp)
 		break;
 	case wait:
 		playerpwp[pnum]->mj.reqaction = 131;
+
 		if (++twp->wtimer == 20)
 		{
-			if (twp->counter.b[2] != 0)
+			if (twp->counter.b[tagDone] == TRUE)
 			{
 				if (hpMAX == 1)
 					PlayCustomSoundVolume(smallTagSnd, 3.0f);
@@ -262,7 +289,6 @@ void tag_Exec(task* tp)
 	LoopTaskC(tp);
 	tp->disp(tp);
 }
-
 
 void initGraffitiMdl()
 {
