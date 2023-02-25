@@ -13,8 +13,12 @@ void replaceSonkActions()
 	auto root = rootMdl->getmodel();
 	uint16_t i = 0;
 
-	for (i = 0; i < 24; i++)
+	for (i = 0; i < 73; i++)
 	{
+		//24, 25 and 26 don't exist
+		if (!SONIC_ACTIONS[i])
+			continue;
+
 		if (i == 14)
 		{
 			SONIC_ACTIONS[i]->object = curled->getmodel();
@@ -30,12 +34,7 @@ void replaceSonkActions()
 		SONIC_ACTIONS[i]->object = root;
 	}
 
-	//24, 25 and 26 don't exist
-
-	for (i = 27; i < 73; i++)
-	{
-		SONIC_ACTIONS[i]->object = root;
-	}
+	//we skip snowboarding anims as we don't need to replace them
 
 	for (i = 87; i < 110; i++)
 	{
@@ -53,7 +52,7 @@ void replaceSonkActions()
 		SONIC_ACTIONS[i]->object = root;
 	}
 
-	//we skip snowboarding anims as we don't need to replace them
+	//Super Sonic go here
 
 	for (i = 145; i < 149; i++)
 	{
@@ -63,6 +62,11 @@ void replaceSonkActions()
 
 void replaceSonkModels()
 {
+	//toe
+	SONIC_MODELS[0] = rootMdl->getmodel()->getnode(63)->basicdxmodel;
+	SONIC_MODELS[1] = rootMdl->getmodel()->getnode(53)->basicdxmodel;
+
+	//head
 	SONIC_MODELS[8] = rootMdl->getmodel()->getnode(22)->basicdxmodel;
 	SONIC_MODELS[9] = morphHead->getmodel()->basicdxmodel;
 }
@@ -116,6 +120,7 @@ void replaceSonkObjects()
 	SONIC_OBJECTS[51] = root->getnode(17);
 	SONIC_OBJECTS[52] = root->getnode(21);
 
+	SONIC_OBJECTS[62] = root->getnode(28);
 	SONIC_OBJECTS[66] = curled->getmodel();
 	SONIC_OBJECTS[67] = jumpBall->getmodel();
 }
@@ -133,7 +138,6 @@ void ReplaceFaceMotion()
 
 void init_chrModel()
 {
-
 	rootMdl = LoadBasicModel("root");
 	morphHead = LoadBasicModel("morphHead");
 	jumpBall = LoadBasicModel("jumpBall");
@@ -152,4 +156,5 @@ void init_chrModel()
 	}
 
 	WriteData<1>((int*)0x493500, 0xC3); //disable morph feet
+	WriteJump((void*)0x49BE2D, (void*)0x49BE68); //disable light shoes
 }

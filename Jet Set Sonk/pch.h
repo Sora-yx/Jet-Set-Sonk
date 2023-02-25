@@ -19,5 +19,7 @@
 
 #include "mod.h"
 #include "util.h"
+#include "audio.h"
+
 
 #endif //PCH_H

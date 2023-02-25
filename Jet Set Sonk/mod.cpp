@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "objects.h"
 
 HelperFunctions HelperFunctionsGlobal;
 std::string modpath;
@@ -23,12 +24,19 @@ extern "C" {
 		modpath = path;
 		ReadConfig(path, helperFunctions);
 		init_chrModel();
+		initSonkEff();
+		initSH_Objects();
+		Sounds_Init();
 
 	}
 
 
 	__declspec(dllexport) void __cdecl OnFrame()
 	{
+		if (IsIngame())
+		{
+			RunCustomSounds();
+		}
 
 	}
 

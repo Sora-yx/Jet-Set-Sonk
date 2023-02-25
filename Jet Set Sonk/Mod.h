@@ -9,6 +9,9 @@ void init_chrModel();
 void SonicJVList();
 void initAnims();
 void initSkatingEffects();
+void initSonkEff();
 
 
 #define TaskHook static FunctionHook<void, task*>
+
+constexpr char pMax = 8;

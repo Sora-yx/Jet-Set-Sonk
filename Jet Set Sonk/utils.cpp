@@ -160,3 +160,40 @@ void PlayerLookAt(NJS_VECTOR* from, NJS_VECTOR* to, Angle* outx, Angle* outy) {
 		*outy = -(*outy) + 0x4000;
 	}
 }
+
+float GetSquare(NJS_VECTOR* orig, NJS_VECTOR* dest) 
+{
+	return powf(dest->x - orig->x, 2) + powf(dest->y - orig->y, 2) + powf(dest->z - orig->z, 2);
+}
+
+float GetDistance(NJS_VECTOR* orig, NJS_VECTOR* dest) 
+{
+	return sqrtf(GetSquare(orig, dest));
+}
+
+bool IsPointInsideSphere(NJS_VECTOR* center, NJS_VECTOR* pos, float radius) {
+	return GetDistance(center, pos) <= radius;
+}
+
+int IsPlayerInsideSphere_(NJS_VECTOR* center, float radius) {
+	for (uint8_t player = 0; player < pMax; ++player) {
+		if (!EntityData1Ptrs[player])
+			continue;
+
+		if (IsPointInsideSphere(center, &EntityData1Ptrs[player]->Position, radius)) {
+			return player + 1;
+		}
+	}
+
+	return 0;
+}
+
+void ResetPlayerLook(char pnum)
+{
+	auto p = playertwp[pnum];
+	if (p) {
+		p->ewp->look.ang = { 0, 0, 0 };
+		p->ewp->look.mode = 0;
+		p->ewp->look.obj = 0;
+	}
+}
