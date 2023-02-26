@@ -188,7 +188,7 @@ int IsPlayerInsideSphere_(NJS_VECTOR* center, float radius) {
 	return 0;
 }
 
-void ResetPlayerLook(char pnum)
+void ResetPlayerLook(uint8_t pnum)
 {
 	auto p = playertwp[pnum];
 	if (p) {
@@ -197,7 +197,6 @@ void ResetPlayerLook(char pnum)
 		p->ewp->look.obj = 0;
 	}
 }
-
 
 int GetUVCount(NJS_MESHSET_SADX* meshset) 
 {

@@ -4,7 +4,7 @@
 static ModelInfo* tagMdls[3]{ nullptr };
 static ModelInfo* tagArrowMdl = nullptr;
 extern uint8_t sprayPaintCount[];
-uint8_t tagsLeft = 0;
+uint8_t tagsLeft[pMax]{ 0 };
 static bool isTag_ = false;
 
 enum //tag store data task 
@@ -69,7 +69,7 @@ void setNumberOfTagToDo()
 	if (!setSize)
 		return;
 
-	tagsLeft = 0;
+	tagsLeft[CurrentAct] = 0;
 	int id = 0;
 
 	for (int i = 0; i < setSize; i++)
@@ -81,7 +81,7 @@ void setNumberOfTagToDo()
 
 		if (CurrentObjectList->List[id].LoadSub == (ObjectFuncPtr)tag_Exec)
 		{
-			tagsLeft++;
+			tagsLeft[CurrentAct]++;
 		}
 	}
 }
@@ -96,7 +96,6 @@ void ChildArrowDisp(task* tp)
 	SetMaterial(1.0f, 1.0f, 0.0f, 0.0f); //set red color to the arrow
 	njPushMatrix(0);
 	njTranslateV(0, &twp->pos);
-	njRotateY(0, twp->ang.y);
 	dsDrawObject(tagArrowMdl->getmodel());
 	njPopMatrix(1u);
 	ResetMaterial();
@@ -131,10 +130,10 @@ void ChildArrow(task* tp)
 	tp->disp(tp);
 }
 
-void DoGraffiti(char pnum, task* tp)
+void DoGraffiti(uint8_t pnum, task* tp)
 {
 	auto twp = tp->twp;
-	const char hpMAX = sprayNeeded[static_cast<int>(twp->scl.x)];
+	const uint8_t hpMAX = sprayNeeded[static_cast<uint8_t>(twp->scl.x)];
 	NJS_POINT3 vel = { 1.0, 4.0f, 0.0 };
 	auto p = playertwp[pnum];
 
@@ -150,7 +149,7 @@ void DoGraffiti(char pnum, task* tp)
 		ForcePlayerAction(0, 12);
 		PlayerLookAt(&p->pos, &twp->pos, 0, &p->ang.y);
 
-		char curHP = getTagHP(twp);
+		uint8_t curHP = getTagHP(twp);
 
 		playerpwp[pnum]->mj.reqaction = 130;
 		PlayCustomSoundVolume(sprayPaintSnd, 2.0f);
@@ -164,6 +163,7 @@ void DoGraffiti(char pnum, task* tp)
 		if (curHP >= hpMAX)
 		{
 			twp->counter.b[tagDone] = TRUE;
+
 			if (tp->ocp)
 			{
 				if (!SetCPFlag(tp))
@@ -172,7 +172,7 @@ void DoGraffiti(char pnum, task* tp)
 				}
 			}
 
-			tagsLeft--;
+			tagsLeft[CurrentAct]--;
 		}
 
 		twp->mode = wait;
@@ -185,7 +185,7 @@ void DoGraffiti(char pnum, task* tp)
 	}
 }
 
-void CheckGraffitiInput(task* tp, NJS_POINT3 pos, char pnum)
+void CheckGraffitiInput(task* tp, NJS_POINT3 pos, uint8_t pnum)
 {
 	if (CheckCollisionP(&pos, 35.0f))
 	{
@@ -205,8 +205,8 @@ void tag_Disp(task* tp)
 	if (MissedFrames || twp->mode < checkInput || !isTagDone(twp) && getTagHP(twp) <= 0)
 		return;
 
-	const char id = static_cast<int>(twp->scl.x);
-	char texID = getTagTexID(twp);
+	const uint8_t id = static_cast<uint8_t>(twp->scl.x);
+	uint8_t texID = getTagTexID(twp);
 	NJS_MODEL_SADX* mdl = (NJS_MODEL_SADX*)tagMdls[id]->getmodel()->model;
 
 	mdl->mats[0].attr_texId = texID - (sprayNeeded[id]) + getTagHP(twp);
@@ -226,13 +226,11 @@ void tag_Exec(task* tp)
 	if (CheckRangeOut(tp))
 		return;
 
-	SetDebugFontSize(24);
-	DisplayDebugStringFormatted(NJM_LOCATION(2, 2), "Tags Left: %d", tagsLeft);
 
 	auto twp = tp->twp;
-	const char id = static_cast<int>(twp->scl.x);
-	char pnum = GetTheNearestPlayerNumber(&twp->pos);
-	const char hpMAX = sprayNeeded[id];
+	const uint8_t id = static_cast<uint8_t>(twp->scl.x);
+	uint8_t pnum = GetTheNearestPlayerNumber(&twp->pos);
+	const uint8_t hpMAX = sprayNeeded[id];
 	NJS_MODEL_SADX* mdl = (NJS_MODEL_SADX*)tagMdls[id]->getmodel()->model;
 
 
@@ -240,6 +238,8 @@ void tag_Exec(task* tp)
 	{
 	case init:
 		SetFlagNoRespawn(tp);
+
+		resetTagDataValues(twp);
 		tp->disp = tag_Disp;
 		twp->pos.y -= 4.0f;
 
@@ -248,14 +248,18 @@ void tag_Exec(task* tp)
 		else if (twp->scl.x < 0.0f)
 			twp->scl.x = 0.0f;
 
+		twp->counter.b[texID] = mdl->mats[0].attr_texId; //save tag tex id
+
 		if (!SetCPFlag(tp))
 		{
-			resetTagDataValues(twp);
-			twp->counter.b[texID] = mdl->mats[0].attr_texId; //save tag tex id
 			twp->mode = createChild;
 		}
 		else
+		{
+			twp->counter.b[tagHP] = sprayNeeded[id];
+			twp->counter.b[tagDone] = TRUE;
 			twp->mode = done;
+		}	
 		break;
 	case createChild:
 		CreateChildTask(2, ChildArrow, tp);

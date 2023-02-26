@@ -65,7 +65,6 @@ static void SonkDisplay_r(task* tp)
 	*NodeCallbackFuncPtr = *backupCallback; //restore
 }
 
-
 void initSonkEff()
 {
 	SonicDisplay_t.Hook(SonkDisplay_r);

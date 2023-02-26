@@ -1,13 +1,19 @@
 #include "pch.h"
 #include "objects.h"
 
-CCL_INFO SprayCollision = { 0, 0x0, 0xb0, 0x0, 0x0, { 0.0, 3.0, 0.0 }, 4.5, 0.0, 0.0, 0.0, 0, 0, 0 };
+CCL_INFO SprayCollision = { 0, 0x0, 0xb0, 0x0, 0x0, { 0.0, 3.0, 0.0 }, 5.0, 0.0, 0.0, 0.0, 0, 0, 0 };
+CCL_INFO SprayCollisionL = { 0, 0x0, 0xb0, 0x0, 0x0, { 0.0, 6.0, 0.0 }, 8.0, 0.0, 0.0, 0.0, 0, 0, 0 };
 
 static ModelInfo* sprayMdl = nullptr;
 static ModelInfo* sprayHoldMdl = nullptr;
 uint8_t sprayPaintCount[pMax]{ 0 };
 static uint8_t sprayPaintMax = 20;
 extern NJS_MATRIX rightFingers;
+
+void SprayExec(task* tp)
+{
+
+}
 
 void drawSprayPaintHand(taskwk* twp, playerwk* pwp)
 {
@@ -47,7 +53,7 @@ void drawSprayPaintHand(taskwk* twp, playerwk* pwp)
 	njSetTexture(backup);
 }
 
-void sprayPaintAdd(char pnum, char count)
+void sprayPaintAdd(uint8_t pnum, uint8_t count)
 {
 	if (sprayPaintCount[pnum] + count < sprayPaintMax)
 	{
@@ -66,7 +72,7 @@ void sprayPaint_Disp(task* tp)
 
 	auto twp = tp->twp;
 
-	NJS_POINT3 scl= { 1.0f, 1.0f, 1.0f };
+	NJS_POINT3 scl = { 1.0f, 1.0f, 1.0f };
 	NJS_ARGB color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	if (twp->scl.x >= 2.0f)
 	{
@@ -95,13 +101,16 @@ void sprayPaint_Exec(task* tp)
 
 	auto twp = tp->twp;
 	taskwk* player = nullptr;
-	char count = twp->scl.x == 2 ? 5 : 1;
+	uint8_t count = static_cast<uint8_t>(twp->scl.x) == 2 ? 5 : 1;
 
 	switch (twp->mode)
 	{
 	case 0:
 	default:
-		CCL_Init(tp, &SprayCollision, 1, 4u);
+		if (twp->scl.x >= 2.0f)
+			CCL_Init(tp, &SprayCollisionL, 1, 4u);
+		else
+			CCL_Init(tp, &SprayCollision, 1, 4u);
 		tp->disp = sprayPaint_Disp;
 		if (twp->scl.x > 2)
 			twp->scl.x = 2;

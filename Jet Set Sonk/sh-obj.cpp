@@ -4,6 +4,13 @@
 static NJS_TEXNAME graffitiTex[11]{ 0 };
 NJS_TEXLIST graffitiTexlist = { arrayptrandlength(graffitiTex) };
 
+
+
+void BackRing(task* tp)
+{
+
+}
+
 PVMEntry SpeedHighwayObjectTextures[] = {
 	{ "OBJ_HIGHWAY", (TexList*)0x26703F0 },
 	{ "OBJ_HIGHWAY2", (TexList*)0x26706AC },
@@ -30,7 +37,7 @@ ObjectListEntry SpeedHighwayObjectList_list[] = {
 	{ 2, 3, 0, 0, 0, (ObjectFuncPtr)0x7A3E50, "O FeBJG" } /* "O FeBJG" */,
 	{ 2, 3, 0, 0, 0, (ObjectFuncPtr)0x7A30E0, "O TOGE" } /* "O TOGE" */,
 	{ 3, 3, 4, 0, 0, (ObjectFuncPtr)0x4A3420, "O EME P" } /* "O EME P" */,
-	{ 2, 3, 0, 0, 0, (ObjectFuncPtr)0x46B170, "O RELEASE" } /* "O RELEASE" */,
+	{ 2, 3, 0, 0, 0, (ObjectFuncPtr)BackRing, "O RELEASE" } /* "O RELEASE" */,
 	{ 6, 3, 0, 0, 0, (ObjectFuncPtr)0x4CBA80, "O SWITCH" } /* "O SWITCH" */,
 	{ 10, 3, 0, 0, 0, (ObjectFuncPtr)0x7A2B60, "CMN KUSA" } /* "CMN KUSA" */,
 	{ 14, 3, 1, 2250000, 0, (ObjectFuncPtr)0x7A26F0, "CMN_DRING" } /* "CMN_DRING" */,
@@ -157,10 +164,68 @@ void initSH_ObjList()
 	TexLists_Obj[LevelIDs_SpeedHighway] = SpeedHighwayObjectTextures;
 }
 
+void setNumberOfTagToDo();
+extern uint8_t tagsLeft[];
+void Sh_Exec_r(task* tp)
+{
+	auto twp = tp->twp;
+
+	if (!TimeThing)
+		return;
+
+
+	if (tagsLeft[CurrentAct] > 0)
+	{
+		SetDebugFontSize(25);
+		DisplayDebugStringFormatted(NJM_LOCATION(2, 2), "Tags Left (Act %d): %d", CurrentAct + 1, tagsLeft[CurrentAct]);
+	}
+
+	char count = 0;
+
+
+	switch (twp->mode)
+	{
+	case 0:
+	case 1:
+	case 2:
+	//if (CurrentAct == twp->mode)
+	{
+
+		setNumberOfTagToDo();
+		twp->mode++;
+	}
+	break;
+	case 9:
+		if (++twp->wtimer == 60)
+		{
+			LoadLevelResults();
+			FreeTask(tp);
+			return;
+
+		}
+	}
+
+	if (twp->mode != 9)
+	{
+		for (uint8_t i = 0; i < pMax; i++)
+		{
+			if (tagsLeft[i] == 0)
+			{
+				count++;
+			}
+
+			if (count == pMax)
+			{
+				twp->mode = 9;
+
+			}
+		}
+	}
+}
+
 void Obj_SH_r(task* tp)
 {
-
-	setNumberOfTagToDo();
+	CreateElementalTask(2, 2, Sh_Exec_r);
 	tp->exec = (TaskFuncPtr)Obj_SpeedHighway;
 }
 

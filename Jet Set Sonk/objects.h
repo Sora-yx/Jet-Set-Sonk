@@ -8,7 +8,6 @@ void tag_Exec(task* tp);
 extern NJS_TEXLIST graffitiTexlist;
 
 void initSH_Objects();
-void setNumberOfTagToDo();
 bool isTag();
 void drawSprayPaintHand(taskwk* twp, playerwk* pwp);
 void DrawSkatingEffects(playerwk* pwp);
