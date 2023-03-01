@@ -12,7 +12,10 @@ enum sound
 	spray4Snd,
 	spray5Snd,
 	sprayFinalSnd,
-	sprayPaintSnd
+	sprayPaintSnd,
+	policeVoice01 = 20,
+	onishimaVoice01
+
 };
 
 void Sounds_Init();
