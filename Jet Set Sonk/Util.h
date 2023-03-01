@@ -38,4 +38,5 @@ TaskFunc(SetFlagNoRespawn, 0x46C100);
 FunctionPointer(void, SetLookingPoint, (unsigned __int8 player, NJS_POINT3* a2), 0x441000);
 
 void ResetPlayerLook(uint8_t pnum);
-int GetUVCount(NJS_MESHSET_SADX* meshset);
+
+bool IsPathExist(const std::string& s);

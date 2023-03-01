@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "objects.h"
+#include "tags.h"
 
 static NJS_TEXNAME graffitiTex[11]{ 0 };
 NJS_TEXLIST graffitiTexlist = { arrayptrandlength(graffitiTex) };
-
 
 
 void BackRing(task* tp)
@@ -164,74 +164,8 @@ void initSH_ObjList()
 	TexLists_Obj[LevelIDs_SpeedHighway] = SpeedHighwayObjectTextures;
 }
 
-void setNumberOfTagToDo();
-extern uint8_t tagsLeft[];
-void Sh_Exec_r(task* tp)
-{
-	auto twp = tp->twp;
-
-	if (!TimeThing)
-		return;
-
-
-	if (tagsLeft[CurrentAct] > 0)
-	{
-		SetDebugFontSize(25);
-		DisplayDebugStringFormatted(NJM_LOCATION(2, 2), "Tags Left (Act %d): %d", CurrentAct + 1, tagsLeft[CurrentAct]);
-	}
-
-	char count = 0;
-
-
-	switch (twp->mode)
-	{
-	case 0:
-	case 1:
-	case 2:
-	//if (CurrentAct == twp->mode)
-	{
-
-		setNumberOfTagToDo();
-		twp->mode++;
-	}
-	break;
-	case 9:
-		if (++twp->wtimer == 60)
-		{
-			LoadLevelResults();
-			FreeTask(tp);
-			return;
-
-		}
-	}
-
-	if (twp->mode != 9)
-	{
-		for (uint8_t i = 0; i < pMax; i++)
-		{
-			if (tagsLeft[i] == 0)
-			{
-				count++;
-			}
-
-			if (count == pMax)
-			{
-				twp->mode = 9;
-
-			}
-		}
-	}
-}
-
-void Obj_SH_r(task* tp)
-{
-	CreateElementalTask(2, 2, Sh_Exec_r);
-	tp->exec = (TaskFuncPtr)Obj_SpeedHighway;
-}
-
 void initSH_Objects()
 {
-	RoundMasterList[LevelIDs_SpeedHighway] = Obj_SH_r;
 	initSprayMdl();
 	initGraffitiMdl();
 	initSH_ObjList();

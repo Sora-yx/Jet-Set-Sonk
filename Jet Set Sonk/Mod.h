@@ -1,5 +1,11 @@
 #pragma once
 
+
+#define TaskHook static FunctionHook<void, task*>
+
+constexpr char pMax = 8;
+constexpr char actMax = 8;
+
 void ReadConfig(const char* path, const HelperFunctions& helperFunctions);
 
 extern std::string modName;
@@ -10,8 +16,4 @@ void SonicJVList();
 void initAnims();
 void initSkatingEffects();
 void initSonkEff();
-
-
-#define TaskHook static FunctionHook<void, task*>
-
-constexpr char pMax = 8;
+void init_SH();

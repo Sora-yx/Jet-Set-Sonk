@@ -17,19 +17,15 @@ extern "C" {
 				L"Jet Set Sonk Error: Mod Loader out of date", MB_OK | MB_ICONERROR);
 		}
 
-
-
 		HelperFunctionsGlobal = helperFunctions; // Save the helper pointer for external use
-
 		modpath = path;
 		ReadConfig(path, helperFunctions);
 		init_chrModel();
 		initSonkEff();
+		init_SH();
 		initSH_Objects();
 		Sounds_Init();
-
 	}
-
 
 	__declspec(dllexport) void __cdecl OnFrame()
 	{

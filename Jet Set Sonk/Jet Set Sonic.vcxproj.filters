@@ -36,6 +36,9 @@
     <ClInclude Include="audio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -65,9 +68,6 @@
     <ClCompile Include="skating-eff.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sh-obj.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="audio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -77,7 +77,13 @@
     <ClCompile Include="spray-paint.cpp">
       <Filter>Source Files\tag</Filter>
     </ClCompile>
-    <ClCompile Include="graffiti.cpp">
+    <ClCompile Include="tags.cpp">
+      <Filter>Source Files\tag</Filter>
+    </ClCompile>
+    <ClCompile Include="sh.cpp">
+      <Filter>Source Files\tag</Filter>
+    </ClCompile>
+    <ClCompile Include="sh-obj.cpp">
       <Filter>Source Files\tag</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,11 +1,14 @@
 #include "pch.h"
 #include "objects.h"
+#include "tags.h"
 
 static ModelInfo* tagMdls[3]{ nullptr };
 static ModelInfo* tagArrowMdl = nullptr;
 extern uint8_t sprayPaintCount[];
-uint8_t tagsLeft[pMax]{ 0 };
-static bool isTag_ = false;
+uint8_t tagsLeft[actMax]{ 0 };
+uint8_t tagCount{ 0 };
+
+bool isTagging = false;
 
 enum //tag store data task 
 {
@@ -23,8 +26,7 @@ enum //tag task enum
 	done,
 };
 
-static uint8_t sprayNeeded[3]
-{
+static uint8_t sprayNeeded[3] = {
 	1, //small
 	3, //normal
 	6 //large
@@ -52,9 +54,11 @@ static uint8_t getTagHP(taskwk* twp)
 	return twp->counter.b[tagHP];
 }
 
-bool isTag()
+void SetTagDone(taskwk* twp)
 {
-	return isTag_;
+	twp->counter.b[tagDone] = TRUE;
+	tagsLeft[CurrentAct] = tagsLeft[CurrentAct] > 0 ? --tagsLeft[CurrentAct] : 0;
+	tagCount++;
 }
 
 void setNumberOfTagToDo()
@@ -70,11 +74,12 @@ void setNumberOfTagToDo()
 		return;
 
 	tagsLeft[CurrentAct] = 0;
-	int id = 0;
 
-	for (int i = 0; i < setSize; i++)
+	uint16_t id = 0;
+
+	for (uint16_t j = 0; j < setSize; j++)
 	{
-		id = Set[i].ObjectType & 0x7FFF;
+		id = Set[j].ObjectType & 0x7FFF;
 
 		if (!id)
 			continue;
@@ -139,7 +144,7 @@ void DoGraffiti(uint8_t pnum, task* tp)
 
 	if (sprayPaintCount[pnum] > 0)
 	{
-		isTag_ = true;
+		isTagging = true;
 
 		sprayPaintCount[pnum]--;
 		twp->counter.b[tagHP]++;
@@ -162,7 +167,6 @@ void DoGraffiti(uint8_t pnum, task* tp)
 
 		if (curHP >= hpMAX)
 		{
-			twp->counter.b[tagDone] = TRUE;
 
 			if (tp->ocp)
 			{
@@ -172,7 +176,7 @@ void DoGraffiti(uint8_t pnum, task* tp)
 				}
 			}
 
-			tagsLeft[CurrentAct]--;
+			SetTagDone(twp);
 		}
 
 		twp->mode = wait;
@@ -226,13 +230,17 @@ void tag_Exec(task* tp)
 	if (CheckRangeOut(tp))
 		return;
 
-
 	auto twp = tp->twp;
+
+	if (twp->scl.x > 2.0f)
+		twp->scl.x = 2.0f;
+	else if (twp->scl.x < 0.0f)
+		twp->scl.x = 0.0f;
+
 	const uint8_t id = static_cast<uint8_t>(twp->scl.x);
 	uint8_t pnum = GetTheNearestPlayerNumber(&twp->pos);
 	const uint8_t hpMAX = sprayNeeded[id];
-	NJS_MODEL_SADX* mdl = (NJS_MODEL_SADX*)tagMdls[id]->getmodel()->model;
-
+	const NJS_MODEL_SADX* mdl = (NJS_MODEL_SADX*)tagMdls[id]->getmodel()->model;
 
 	switch (twp->mode)
 	{
@@ -241,13 +249,6 @@ void tag_Exec(task* tp)
 
 		resetTagDataValues(twp);
 		tp->disp = tag_Disp;
-		twp->pos.y -= 4.0f;
-
-		if (twp->scl.x > 2.0f)
-			twp->scl.x = 2.0f;
-		else if (twp->scl.x < 0.0f)
-			twp->scl.x = 0.0f;
-
 		twp->counter.b[texID] = mdl->mats[0].attr_texId; //save tag tex id
 
 		if (!SetCPFlag(tp))
@@ -259,7 +260,7 @@ void tag_Exec(task* tp)
 			twp->counter.b[tagHP] = sprayNeeded[id];
 			twp->counter.b[tagDone] = TRUE;
 			twp->mode = done;
-		}	
+		}
 		break;
 	case createChild:
 		CreateChildTask(2, ChildArrow, tp);
@@ -281,7 +282,7 @@ void tag_Exec(task* tp)
 					PlayCustomSoundVolume(sprayFinalSnd, 3.0f);
 			}
 			ResetPlayerLook(pnum);
-			isTag_ = false;
+			isTagging = false;
 			twp->wtimer = 0;
 			ForcePlayerAction(0, 24);
 			twp->mode = SetCPFlag(tp) ? done : checkInput;

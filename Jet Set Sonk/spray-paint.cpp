@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "objects.h"
+#include "tags.h"
 
 CCL_INFO SprayCollision = { 0, 0x0, 0xb0, 0x0, 0x0, { 0.0, 3.0, 0.0 }, 5.0, 0.0, 0.0, 0.0, 0, 0, 0 };
 CCL_INFO SprayCollisionL = { 0, 0x0, 0xb0, 0x0, 0x0, { 0.0, 6.0, 0.0 }, 8.0, 0.0, 0.0, 0.0, 0, 0, 0 };
@@ -17,7 +18,7 @@ void SprayExec(task* tp)
 
 void drawSprayPaintHand(taskwk* twp, playerwk* pwp)
 {
-	if (!isTag())
+	if (!isTagging)
 		return;
 
 	bool SS = playerpwp[twp->counter.b[0]]->equipment & Upgrades_SuperSonic;
