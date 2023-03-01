@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<ConfigSchema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sonicretro.org">
+	<Groups>
+		<Group name="Main" display="1. Main">
+			<Property name="tagLvl" display="Enable Tag Level" type="bool" defaultvalue="True">
+				<HelpText>Make Speed Highway a stage where you have to tags the area to beat it.</HelpText>
+			</Property>	
+			
+	<Property name="hardMode" display="Hard Mode" type="bool" defaultvalue="False">
+				<HelpText>Enable Hard Mode for the Tag level; spray paint will be limited, number of tags to do increased and your time limited.</HelpText>
+			</Property>	
+
+	  </Group>
+	  
+		</Groups>
+		
+
+</ConfigSchema>
