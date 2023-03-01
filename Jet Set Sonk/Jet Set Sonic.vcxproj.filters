@@ -16,6 +16,9 @@
     <Filter Include="Source Files\tag">
       <UniqueIdentifier>{fe8cfdd5-9db8-4d62-a26e-805bfad44158}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\skin">
+      <UniqueIdentifier>{805a8a3a-935f-4582-9bd1-8c9e1928a219}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -56,18 +59,6 @@
     <ClCompile Include="utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="chrmodel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="welds.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="animations.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="skating-eff.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="audio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -85,6 +76,18 @@
     </ClCompile>
     <ClCompile Include="sh-obj.cpp">
       <Filter>Source Files\tag</Filter>
+    </ClCompile>
+    <ClCompile Include="welds.cpp">
+      <Filter>Source Files\skin</Filter>
+    </ClCompile>
+    <ClCompile Include="chrmodel.cpp">
+      <Filter>Source Files\skin</Filter>
+    </ClCompile>
+    <ClCompile Include="animations.cpp">
+      <Filter>Source Files\skin</Filter>
+    </ClCompile>
+    <ClCompile Include="skating-eff.cpp">
+      <Filter>Source Files\skin</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

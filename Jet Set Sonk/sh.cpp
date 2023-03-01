@@ -124,7 +124,7 @@ void Sh_Exec_r(task* tp)
 	if (tagsLeft[CurrentAct] > 0)
 	{
 		SetDebugFontSize(25);
-		//DisplayDebugStringFormatted(NJM_LOCATION(2, 2), "Tags Left (Act %d): %d", CurrentAct + 1, tagsLeft[CurrentAct]);
+		DisplayDebugStringFormatted(NJM_LOCATION(2, 2), "Tags Left: %d", tagsLeft[CurrentAct]);
 	}
 
 	char count = 0;
@@ -143,7 +143,7 @@ void Sh_Exec_r(task* tp)
 	case 9:
 		if (++twp->wtimer == 60)
 		{
-			//LoadLevelResults();
+			LoadLevelResults();
 			FreeTask(tp);
 			return;
 

@@ -2,6 +2,7 @@
 
 
 #define TaskHook static FunctionHook<void, task*>
+#define njArcTan2(y,x)   ((Angle)NJM_RAD_ANG(atan2f ((Float)(y),(Float)(x)) ))
 
 constexpr char pMax = 8;
 constexpr char actMax = 8;

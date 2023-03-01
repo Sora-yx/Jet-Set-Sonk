@@ -15,7 +15,7 @@ inline AnimationFile* LoadANM(const char* type, const char* name);
 void LookAt(NJS_VECTOR* unit, Angle* outx, Angle* outy);
 void LookAt(NJS_VECTOR* from, NJS_VECTOR* to, Angle* outx, Angle* outy);
 void PlayerLookAt(NJS_VECTOR* from, NJS_VECTOR* to, Angle* outx, Angle* outy);
-
+void MoveForward(taskwk* entity, float speed);
 
 float GetDistance(NJS_VECTOR* orig, NJS_VECTOR* dest);
 bool IsPointInsideSphere(NJS_VECTOR* center, NJS_VECTOR* pos, float radius);

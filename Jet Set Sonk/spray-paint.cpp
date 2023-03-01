@@ -10,10 +10,24 @@ static ModelInfo* sprayHoldMdl = nullptr;
 uint8_t sprayPaintCount[pMax]{ 0 };
 static uint8_t sprayPaintMax = 20;
 extern NJS_MATRIX rightFingers;
+extern NJS_POINT3 curTagPos[];
 
 void SprayExec(task* tp)
 {
+	if (!isTagging)
+	{
+		FreeTask(tp);
+		return;
+	}
+		
+	auto twp = tp->twp;
 
+	NJS_POINT3 scl = { 0.0f, 0.0f, 0.0f };
+
+	LookAt(&twp->pos, &twp->scl, &twp->ang.x, &twp->ang.y);
+	MoveForward(twp, 2.0f);
+
+	CreateWater(&twp->pos, &scl, 1.0f);
 }
 
 void drawSprayPaintHand(taskwk* twp, playerwk* pwp)
@@ -21,7 +35,8 @@ void drawSprayPaintHand(taskwk* twp, playerwk* pwp)
 	if (!isTagging)
 		return;
 
-	bool SS = playerpwp[twp->counter.b[0]]->equipment & Upgrades_SuperSonic;
+	auto pnum = twp->counter.b[0];
+	bool SS = playerpwp[pnum]->equipment & Upgrades_SuperSonic;
 	NJS_POINT3 scl = { 2.5f, 2.5f, 2.5f };
 	NJS_POINT3 pos{ NULL };
 	pos.z -= 0.5f;
@@ -36,19 +51,24 @@ void drawSprayPaintHand(taskwk* twp, playerwk* pwp)
 	late_DrawObjectClipMesh(sprayHoldMdl->getmodel(), LATE_LIG, 0.0f);
 	njPopMatrixEx();
 
-	NJS_POINT3 sprayPos;
-	sprayPos = pwp->righthand_pos;
+	NJS_POINT3 startpos{ 0,0,0 };
+	NJS_POINT3 dest = pwp->righthand_pos;
 
 	njPushMatrix(nj_unit_matrix_);
 	njRotateZ(0, twp->ang.z);
 	njRotateX(0, twp->ang.x);
 	njRotateY(0, (0x8000 - twp->ang.y));
-	njCalcVector(_nj_current_matrix_ptr_, &sprayPos, &sprayPos);
+	njCalcVector(_nj_current_matrix_ptr_, &dest, &startpos);
 	njPopMatrix(1u);
-	njAddVector(&sprayPos, &twp->cwp->info->center);
+	njAddVector(&startpos, &twp->cwp->info->center);
 
-	CreateWater(&sprayPos, &scl, 1.2f);
+	auto task = CreateElementalTask(LoadObj_Data1, 6, SprayExec);
 
+	if (task)
+	{
+		task->twp->pos = startpos;
+		task->twp->scl = curTagPos[pnum];
+	}
 
 	___dsSetPalette(0);
 	njSetTexture(backup);
@@ -77,7 +97,7 @@ void sprayPaint_Disp(task* tp)
 	NJS_ARGB color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	if (twp->scl.x >= 2.0f)
 	{
-		scl = {2.0f, 2.0f, 2.0f };
+		scl = { 2.0f, 2.0f, 2.0f };
 		color.r = 0.0f;
 		color.g = 0.0f;
 	}
@@ -126,7 +146,7 @@ void sprayPaint_Exec(task* tp)
 		if (player)
 		{
 			//if Miles AI grab a spray, give it to Sonk
-			if (player == playertwp[1] && TailsAI_ptr->Data1->CharIndex == 1) 
+			if (player == playertwp[1] && TailsAI_ptr->Data1->CharIndex == 1)
 				sprayPaintAdd(0, count);
 			else
 				sprayPaintAdd(player->counter.b[0], count);

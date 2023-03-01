@@ -9,6 +9,7 @@ uint8_t tagsLeft[actMax]{ 0 };
 uint8_t tagCount{ 0 };
 
 bool isTagging = false;
+NJS_POINT3 curTagPos[pMax];
 
 enum //tag store data task 
 {
@@ -139,13 +140,13 @@ void DoGraffiti(uint8_t pnum, task* tp)
 {
 	auto twp = tp->twp;
 	const uint8_t hpMAX = sprayNeeded[static_cast<uint8_t>(twp->scl.x)];
-	NJS_POINT3 vel = { 1.0, 4.0f, 0.0 };
+	NJS_POINT3 vel = { 1.0f, 4.0f, 0.0f };
 	auto p = playertwp[pnum];
 
 	if (sprayPaintCount[pnum] > 0)
 	{
 		isTagging = true;
-
+		curTagPos[pnum] = twp->pos;
 		sprayPaintCount[pnum]--;
 		twp->counter.b[tagHP]++;
 
@@ -249,6 +250,7 @@ void tag_Exec(task* tp)
 
 		resetTagDataValues(twp);
 		tp->disp = tag_Disp;
+
 		twp->counter.b[texID] = mdl->mats[0].attr_texId; //save tag tex id
 
 		if (!SetCPFlag(tp))

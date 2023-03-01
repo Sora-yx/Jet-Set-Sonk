@@ -115,20 +115,33 @@ inline AnimationFile* LoadANM(const char* type, const char* name)
 }
 
 
-void LookAt(NJS_VECTOR* unit, Angle* outx, Angle* outy) {
+void MoveForward(taskwk* entity, float speed) 
+{
+	njPushMatrix(_nj_unit_matrix_);
+	njTranslateEx(&entity->pos);
+	njRotateY(0, entity->ang.y);
+	njRotateX(0, entity->ang.x);
+	njTranslate(0, 0, 0, speed);
+	njGetTranslation(0, &entity->pos);
+	njPopMatrix(1u);
+}
+
+void LookAt(NJS_VECTOR* unit, Angle* outx, Angle* outy) 
+{
 	if (outy) {
-		*outy = static_cast<Angle>(atan2f(unit->x, unit->z) * 65536.0f * 0.1591549762031479f);
+		*outy = static_cast<Angle>(njArcTan2(unit->x, unit->z));
 	}
 
 	if (outx) {
 		Float len = 1.0f / squareroot(unit->z * unit->z + unit->x * unit->x + unit->y * unit->y);
 
-		*outx = static_cast<Angle>((acos(len * 3.3499999f) * 65536.0f * 0.1591549762031479f)
-			- (acos(-(len * unit->y)) * 65536.0f * 0.1591549762031479f));
+		*outx = static_cast<Angle>((njArcCos(len * 3.3499999f))
+			- (njArcCos(-(len * unit->y))));
 	}
 }
 
-void LookAt(NJS_VECTOR* from, NJS_VECTOR* to, Angle* outx, Angle* outy) {
+void LookAt(NJS_VECTOR* from, NJS_VECTOR* to, Angle* outx, Angle* outy) 
+{
 	if (!from || !to)
 		return;
 
@@ -136,27 +149,32 @@ void LookAt(NJS_VECTOR* from, NJS_VECTOR* to, Angle* outx, Angle* outy) {
 
 	njSubVector(&unit, from);
 
-	if (outy) {
-		*outy = static_cast<Angle>(atan2f(unit.x, unit.z) * 65536.0f * 0.1591549762031479f);
+	if (outy) 
+	{
+		*outy = static_cast<Angle>(njArcTan2(unit.x, unit.z));
 	}
 
-	if (outx) {
-		if (from->y == to->y) {
+	if (outx) 
+	{
+		if (from->y == to->y) 
+		{
 			*outx = 0;
 		}
 		else {
 			Float len = 1.0f / squareroot(unit.z * unit.z + unit.x * unit.x + unit.y * unit.y);
 
-			*outx = static_cast<Angle>((acos(len * 3.3499999f) * 65536.0f * 0.1591549762031479f)
-				- (acos(-(len * unit.y)) * 65536.0f * 0.1591549762031479f));
+			*outx = static_cast<Angle>((njArcCos(len * 3.3499999f))
+				- (njArcCos(-(len * unit.y))));
 		}
 	}
 }
 
-void PlayerLookAt(NJS_VECTOR* from, NJS_VECTOR* to, Angle* outx, Angle* outy) {
+void PlayerLookAt(NJS_VECTOR* from, NJS_VECTOR* to, Angle* outx, Angle* outy) 
+{
 	LookAt(from, to, outx, outy);
 
-	if (outy) {
+	if (outy) 
+	{
 		*outy = -(*outy) + 0x4000;
 	}
 }
