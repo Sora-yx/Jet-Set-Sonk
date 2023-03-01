@@ -2,14 +2,39 @@
 #include "objects.h"
 #include "tags.h"
 
-static ModelInfo* tagMdls[3]{ nullptr };
+static constexpr uint8_t tagMdlCount = 3;
+
+static ModelInfo* tagMdls[tagMdlCount]{ nullptr };
 static ModelInfo* tagArrowMdl = nullptr;
 extern uint8_t sprayPaintCount[];
 uint8_t tagsLeft[actMax]{ 0 };
 uint8_t tagCount{ 0 };
-
+static uint8_t saveTexId[tagMdlCount];
 bool isTagging = false;
 NJS_POINT3 curTagPos[pMax];
+
+
+void restoreGraffitiTexs()
+{
+	for (uint8_t i = 0; i < tagMdlCount; i++)
+	{
+		NJS_MODEL_SADX* mdl = (NJS_MODEL_SADX*)tagMdls[i]->getmodel()->model;
+
+		mdl->mats[0].attr_texId = saveTexId[i];
+	}
+}
+
+void saveGraffitiTexs()
+{
+	for (uint8_t i = 0; i < tagMdlCount; i++)
+	{
+		NJS_MODEL_SADX* mdl = (NJS_MODEL_SADX*)tagMdls[i]->getmodel()->model;
+
+		if (mdl)
+			saveTexId[i] = mdl->mats[0].attr_texId;
+	}
+}
+
 
 enum //tag store data task 
 {
@@ -64,6 +89,9 @@ void SetTagDone(taskwk* twp)
 
 void setNumberOfTagToDo()
 {
+	if (tagsLeft[CurrentAct] > 0)
+		return;
+
 	if (!CurrentObjectList || !CurrentSetFile)
 		return;
 
@@ -74,8 +102,6 @@ void setNumberOfTagToDo()
 	if (!setSize)
 		return;
 
-	tagsLeft[CurrentAct] = 0;
-
 	uint16_t id = 0;
 
 	for (uint16_t j = 0; j < setSize; j++)
@@ -85,7 +111,9 @@ void setNumberOfTagToDo()
 		if (!id)
 			continue;
 
-		if (CurrentObjectList->List[id].LoadSub == (ObjectFuncPtr)tag_Exec)
+		ObjectFuncPtr t = CurrentObjectList->List[id].LoadSub;
+
+		if (t == (ObjectFuncPtr)tag_Exec)
 		{
 			tagsLeft[CurrentAct]++;
 		}
@@ -136,6 +164,36 @@ void ChildArrow(task* tp)
 	tp->disp(tp);
 }
 
+void UpdateGraffiti(task* tp, uint8_t pnum)
+{
+	auto twp = tp->twp;
+	twp->counter.b[tagHP]++;
+	const uint8_t id = static_cast<uint8_t>(twp->scl.x);
+	uint8_t curHP = getTagHP(twp);
+	const uint8_t hpMAX = sprayNeeded[id];
+
+	PlayCustomSoundVolume(sprayPaintSnd, 2.0f);
+
+	if (curHP < hpMAX)
+	{
+		PlayCustomSoundVolume(smallTagSnd + curHP, 3.0f);
+		curHP = getTagHP(twp);
+	}
+
+	if (curHP >= hpMAX)
+	{
+		if (tp->ocp)
+		{
+			if (!SetCPFlag(tp))
+			{
+				SetBroken(tp);
+			}
+		}
+
+		SetTagDone(twp);
+	}
+}
+
 void DoGraffiti(uint8_t pnum, task* tp)
 {
 	auto twp = tp->twp;
@@ -145,40 +203,13 @@ void DoGraffiti(uint8_t pnum, task* tp)
 
 	if (sprayPaintCount[pnum] > 0)
 	{
-		isTagging = true;
 		curTagPos[pnum] = twp->pos;
+		isTagging = true;
 		sprayPaintCount[pnum]--;
-		twp->counter.b[tagHP]++;
-
 		SetLookingPoint(pnum, &twp->pos);
 		p->ang.y = twp->ang.y;
 		ForcePlayerAction(0, 12);
 		PlayerLookAt(&p->pos, &twp->pos, 0, &p->ang.y);
-
-		uint8_t curHP = getTagHP(twp);
-
-		playerpwp[pnum]->mj.reqaction = 130;
-		PlayCustomSoundVolume(sprayPaintSnd, 2.0f);
-
-		if (curHP < hpMAX)
-		{
-			PlayCustomSoundVolume(smallTagSnd + curHP, 3.0f);
-			curHP = getTagHP(twp);
-		}
-
-		if (curHP >= hpMAX)
-		{
-
-			if (tp->ocp)
-			{
-				if (!SetCPFlag(tp))
-				{
-					SetBroken(tp);
-				}
-			}
-
-			SetTagDone(twp);
-		}
 
 		twp->mode = wait;
 		return;
@@ -203,6 +234,7 @@ void CheckGraffitiInput(task* tp, NJS_POINT3 pos, uint8_t pnum)
 	}
 }
 
+
 void tag_Disp(task* tp)
 {
 	auto twp = tp->twp;
@@ -213,6 +245,9 @@ void tag_Disp(task* tp)
 	const uint8_t id = static_cast<uint8_t>(twp->scl.x);
 	uint8_t texID = getTagTexID(twp);
 	NJS_MODEL_SADX* mdl = (NJS_MODEL_SADX*)tagMdls[id]->getmodel()->model;
+
+	if (!mdl)
+		return;
 
 	mdl->mats[0].attr_texId = texID - (sprayNeeded[id]) + getTagHP(twp);
 
@@ -247,11 +282,9 @@ void tag_Exec(task* tp)
 	{
 	case init:
 		SetFlagNoRespawn(tp);
-
 		resetTagDataValues(twp);
-		tp->disp = tag_Disp;
-
 		twp->counter.b[texID] = mdl->mats[0].attr_texId; //save tag tex id
+		tp->disp = tag_Disp;
 
 		if (!SetCPFlag(tp))
 		{
@@ -274,7 +307,13 @@ void tag_Exec(task* tp)
 	case wait:
 		playerpwp[pnum]->mj.reqaction = 131;
 
-		if (++twp->wtimer == 20)
+		++twp->wtimer;
+
+		if (twp->wtimer == 10)
+		{
+			UpdateGraffiti(tp, pnum);
+		}
+		else if (twp->wtimer == 20)
 		{
 			if (twp->counter.b[tagDone] == TRUE)
 			{
@@ -283,6 +322,7 @@ void tag_Exec(task* tp)
 				else
 					PlayCustomSoundVolume(sprayFinalSnd, 3.0f);
 			}
+
 			ResetPlayerLook(pnum);
 			isTagging = false;
 			twp->wtimer = 0;
@@ -302,4 +342,5 @@ void initGraffitiMdl()
 	tagMdls[1] = LoadBasicModel("tagNormal");
 	tagMdls[2] = LoadBasicModel("tagLarge");
 	tagArrowMdl = LoadBasicModel("tagArrow");
+	saveGraffitiTexs();
 }

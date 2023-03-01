@@ -156,6 +156,9 @@ ObjectList SpeedHighwayObjectList = { arraylengthandptrT(SpeedHighwayObjectList_
 
 void initSH_ObjList()
 {
+	if (!tagLvl)
+		return;
+
 	for (uint8_t i = 0; i < 3; i++)
 	{
 		ObjLists[LevelIDs_SpeedHighway * 8 + i] = &SpeedHighwayObjectList;

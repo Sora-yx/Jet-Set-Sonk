@@ -4,7 +4,10 @@
 
 extern std::vector<std::string>Subtitles;
 extern std::vector<uint16_t>TimerSubtitles;
+extern uint8_t actCount;
+extern uint8_t copCount;
 static bool cop = false;
+static char actVisited = 0;
 
 enum
 {
@@ -69,7 +72,7 @@ static void Messages(task* tp)
 		twp->mode++;
 		break;
 	case countCheck:
-		if (tagCount >= 4)
+		if (tagCount >= copCount)
 		{
 			twp->mode++;
 		}
@@ -110,7 +113,8 @@ static void Messages(task* tp)
 
 void Sh_Delete_r(task* tp)
 {
-	tagsLeft[CurrentAct] = 0;
+	//tagsLeft[CurrentAct] = 0;
+	restoreGraffitiTexs();
 	isTagging = false;
 }
 
@@ -136,8 +140,16 @@ void Sh_Exec_r(task* tp)
 	case 2:
 	if (CurrentAct == twp->mode)
 	{
-		setNumberOfTagToDo();
-		twp->mode++;
+		if (++twp->wtimer == 30)
+		{
+			twp->wtimer = 0;
+			setNumberOfTagToDo();
+
+			if (actVisited < twp->mode)
+				actVisited++;
+
+			twp->mode++;
+		}
 	}
 	break;
 	case 9:
@@ -146,7 +158,6 @@ void Sh_Exec_r(task* tp)
 			LoadLevelResults();
 			FreeTask(tp);
 			return;
-
 		}
 	}
 
@@ -159,7 +170,7 @@ void Sh_Exec_r(task* tp)
 				count++;
 			}
 
-			if (count == pMax && tagCount > 0)
+			if (count == pMax && tagCount > 0 && actCount == actVisited)
 			{
 				twp->mode = 9;
 			}
@@ -186,5 +197,8 @@ void Rd_Highway_r(task* tp)
 
 void init_SH()
 {
+	if (!tagLvl)
+		return;
+
 	RoundMasterList[LevelIDs_SpeedHighway] = Rd_Highway_r;
 }

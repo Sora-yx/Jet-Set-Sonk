@@ -9,3 +9,4 @@ extern uint8_t tagCount;
 void setNumberOfTagToDo();
 void tag_Exec(task* tp);
 
+void restoreGraffitiTexs();
