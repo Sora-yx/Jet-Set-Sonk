@@ -89,5 +89,8 @@
     <ClCompile Include="skating-eff.cpp">
       <Filter>Source Files\skin</Filter>
     </ClCompile>
+    <ClCompile Include="hud.cpp">
+      <Filter>Source Files\tag</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

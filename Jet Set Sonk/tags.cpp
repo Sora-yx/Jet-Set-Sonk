@@ -6,13 +6,11 @@ static constexpr uint8_t tagMdlCount = 3;
 
 static ModelInfo* tagMdls[tagMdlCount]{ nullptr };
 static ModelInfo* tagArrowMdl = nullptr;
-extern uint8_t sprayPaintCount[];
 uint8_t tagsLeft[actMax]{ 0 };
 uint8_t tagCount{ 0 };
 static uint8_t saveTexId[tagMdlCount];
 bool isTagging = false;
 NJS_POINT3 curTagPos[pMax];
-
 
 void restoreGraffitiTexs()
 {
@@ -82,6 +80,8 @@ static uint8_t getTagHP(taskwk* twp)
 
 void SetTagDone(taskwk* twp)
 {
+	uint16_t score = 100 * (static_cast<uint16_t>(twp->scl.x) + 1);
+	AddEnemyScore(score);
 	twp->counter.b[tagDone] = TRUE;
 	tagsLeft[CurrentAct] = tagsLeft[CurrentAct] > 0 ? --tagsLeft[CurrentAct] : 0;
 	tagCount++;
@@ -171,7 +171,7 @@ void UpdateGraffiti(task* tp, uint8_t pnum)
 	const uint8_t id = static_cast<uint8_t>(twp->scl.x);
 	uint8_t curHP = getTagHP(twp);
 	const uint8_t hpMAX = sprayNeeded[id];
-
+	AddEnemyScore(100);
 	PlayCustomSoundVolume(sprayPaintSnd, 2.0f);
 
 	if (curHP < hpMAX)

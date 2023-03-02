@@ -118,6 +118,14 @@ void Sh_Delete_r(task* tp)
 	isTagging = false;
 }
 
+void Sh_Disp_r(task* tp)
+{
+	if (MissedFrames)
+		return;
+
+	DrawTagHud();
+}
+
 void Sh_Exec_r(task* tp)
 {
 	auto twp = tp->twp;
@@ -127,7 +135,7 @@ void Sh_Exec_r(task* tp)
 
 	if (tagsLeft[CurrentAct] > 0)
 	{
-		SetDebugFontSize(25);
+		SetDebugFontSize(26);
 		DisplayDebugStringFormatted(NJM_LOCATION(2, 2), "Tags Left: %d", tagsLeft[CurrentAct]);
 	}
 
@@ -140,12 +148,12 @@ void Sh_Exec_r(task* tp)
 	case 2:
 	if (CurrentAct == twp->mode)
 	{
-		if (++twp->wtimer == 30)
+		if (++twp->wtimer == 20)
 		{
 			twp->wtimer = 0;
 			setNumberOfTagToDo();
 
-			if (actVisited < twp->mode)
+			if (actVisited == twp->mode)
 				actVisited++;
 
 			twp->mode++;
@@ -163,19 +171,21 @@ void Sh_Exec_r(task* tp)
 
 	if (twp->mode != 9)
 	{
-		for (uint8_t i = 0; i < pMax; i++)
+		for (uint8_t i = 0; i < actMax; i++)
 		{
 			if (tagsLeft[i] == 0)
 			{
 				count++;
 			}
 
-			if (count == pMax && tagCount > 0 && actCount == actVisited)
+			if (count == actMax && tagCount > 0 && actCount == actVisited)
 			{
 				twp->mode = 9;
 			}
 		}
 	}
+
+	tp->disp(tp);
 }
 
 void Rd_Highway_r(task* tp)
@@ -184,6 +194,7 @@ void Rd_Highway_r(task* tp)
 
 	if (exec)
 	{
+		exec->disp = Sh_Disp_r;
 		exec->dest = Sh_Delete_r;
 	}
 

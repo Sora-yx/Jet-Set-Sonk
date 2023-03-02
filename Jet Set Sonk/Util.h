@@ -40,3 +40,8 @@ FunctionPointer(void, SetLookingPoint, (unsigned __int8 player, NJS_POINT3* a2),
 void ResetPlayerLook(uint8_t pnum);
 
 bool IsPathExist(const std::string& s);
+
+void SetSpriteParam();
+void ResetSpriteParam();
+void ScaleUI(uiscale::Align type);
+void ResetScaleUI();

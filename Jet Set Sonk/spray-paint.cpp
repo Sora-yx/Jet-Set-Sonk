@@ -8,7 +8,6 @@ CCL_INFO SprayCollisionL = { 0, 0x0, 0xb0, 0x0, 0x0, { 0.0, 6.0, 0.0 }, 8.0, 0.0
 static ModelInfo* sprayMdl = nullptr;
 static ModelInfo* sprayHoldMdl = nullptr;
 uint8_t sprayPaintCount[pMax]{ 0 };
-static uint8_t sprayPaintMax = 20;
 extern NJS_MATRIX rightFingers;
 extern NJS_POINT3 curTagPos[];
 
@@ -151,6 +150,7 @@ void sprayPaint_Exec(task* tp)
 			else
 				sprayPaintAdd(player->counter.b[0], count);
 
+			PlayCustomSoundVolume(sprayGrabSnd, 1.0f);
 			twp->mode++;
 		}
 		break;

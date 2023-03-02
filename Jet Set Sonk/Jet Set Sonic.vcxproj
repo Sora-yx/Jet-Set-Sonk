@@ -164,6 +164,7 @@
     <ClCompile Include="chrmodel.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="hud.cpp" />
     <ClCompile Include="tags.cpp" />
     <ClCompile Include="mod.cpp" />
     <ClCompile Include="pch.cpp">

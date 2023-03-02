@@ -222,3 +222,28 @@ bool IsPathExist(const std::string& s)
 	struct stat buffer;
 	return (stat(s.c_str(), &buffer) == 0);
 }
+
+//make sprite render properly
+void SetSpriteParam()
+{
+	njColorBlendingMode(NJD_SOURCE_COLOR, NJD_COLOR_BLENDING_SRCALPHA);
+	njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_INVSRCALPHA);
+	SetMaterial(1.0f, 1.0, 1.0f, 1.0f);
+}
+
+void ResetSpriteParam()
+{
+	ResetMaterial();
+	njColorBlendingMode(NJD_SOURCE_COLOR, NJD_COLOR_BLENDING_SRCALPHA);
+	njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_INVSRCALPHA);
+}
+
+void ScaleUI(uiscale::Align type)
+{
+	HelperFunctionsGlobal.PushScaleUI((uiscale::Align)(type), false, 1.0f, 1.0f);
+}
+
+void ResetScaleUI()
+{
+	HelperFunctionsGlobal.PopScaleUI();
+}

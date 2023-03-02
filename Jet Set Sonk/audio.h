@@ -13,6 +13,7 @@ enum sound
 	spray5Snd,
 	sprayFinalSnd,
 	sprayPaintSnd,
+	sprayGrabSnd,
 	policeVoice01 = 20,
 	onishimaVoice01
 
