@@ -13,3 +13,4 @@ void tag_Exec(task* tp);
 
 void restoreGraffitiTexs();
 void DrawTagHud();
+void resetSprayCount();

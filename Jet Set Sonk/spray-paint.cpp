@@ -11,6 +11,14 @@ uint8_t sprayPaintCount[pMax]{ 0 };
 extern NJS_MATRIX rightFingers;
 extern NJS_POINT3 curTagPos[];
 
+void resetSprayCount()
+{
+	for (uint8_t i = 0; i < pMax; i++)
+	{
+		sprayPaintCount[i] = 0;
+	}
+}
+
 void SprayExec(task* tp)
 {
 	if (!isTagging)

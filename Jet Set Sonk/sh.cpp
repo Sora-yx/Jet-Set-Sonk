@@ -114,6 +114,7 @@ static void Messages(task* tp)
 void Sh_Delete_r(task* tp)
 {
 	//tagsLeft[CurrentAct] = 0;
+	resetSprayCount();
 	restoreGraffitiTexs();
 	isTagging = false;
 }
