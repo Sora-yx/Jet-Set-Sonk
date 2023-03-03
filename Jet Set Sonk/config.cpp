@@ -5,6 +5,7 @@ std::vector<uint16_t>TimerSubtitles;
 uint8_t actCount = 3;
 uint8_t copCount = 4;
 NJS_POINT3 goalPos[actMax]{ 0, 0, 0 };
+int16_t timerHM = 300;
 
 void ReadInfo(const char* path, const HelperFunctions& helperFunction)
 {
@@ -38,6 +39,12 @@ void ReadInfo(const char* path, const HelperFunctions& helperFunction)
 
 	actCount = textIni->getInt("Level", "Act", actCount);
 	copCount = textIni->getInt("Level", "cop", copCount);
+	timerHM = textIni->getInt("Level", "timerHM", timerHM);
+
+	if (timerHM > 999)
+		timerHM = 999;
+	else if (timerHM <= 20)
+		timerHM = 100; //don't be silly
 
 	count = 0;
 }
@@ -45,7 +52,7 @@ void ReadInfo(const char* path, const HelperFunctions& helperFunction)
 bool tagLvl = true;
 bool hardMode = false;
 
-void ReadModSettings(const char* path)
+void ReadUserSettings(const char* path)
 {
 	const std::string failed = modName + ": Failed to load mod config...\n";
 	if (!IsPathExist(std::string(path) + "\\config.ini"))
@@ -65,6 +72,6 @@ void ReadModSettings(const char* path)
 
 
 void ReadConfig(const char* path, const HelperFunctions& helperFunctions) {
-	ReadModSettings(path);
+	ReadUserSettings(path);
 	ReadInfo(path, helperFunctions);
 }

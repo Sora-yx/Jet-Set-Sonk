@@ -34,7 +34,7 @@ void SprayExec(task* tp)
 	LookAt(&twp->pos, &twp->scl, &twp->ang.x, &twp->ang.y);
 	MoveForward(twp, 2.0f);
 
-	CreateWater(&twp->pos, &scl, 1.0f);
+	CreateWater(&twp->pos, &scl, 0.8f);
 }
 
 void drawSprayPaintHand(taskwk* twp, playerwk* pwp)

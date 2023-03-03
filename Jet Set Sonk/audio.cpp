@@ -217,11 +217,15 @@ CUSTOM_SOUNDENTRY* PlayCustomSoundQueue(int ID, task* obj, NJS_VECTOR* pos, floa
 		entry->dist = dist;
 
 		//The first frame is always wrong for 3d volume, skip it
-		if (obj || pos) entry->volumeA = 0;
+		if (obj || pos) 
+			entry->volumeA = 0;
 
-		if (volume) entry->volumeB = volume;
-		if (pitch) entry->pitch = pitch;
-		if (pos) entry->position = pos;
+		if (volume) 
+			entry->volumeB = volume;
+		if (pitch) 
+			entry->pitch = pitch;
+		if (pos) 
+			entry->position = pos;
 
 		PlaySoundChannelQueue(ID, entry, loop);
 	}

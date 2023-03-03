@@ -8,6 +8,7 @@ extern uint8_t actCount;
 extern uint8_t copCount;
 static bool cop = false;
 static char actVisited = 0;
+extern int16_t timerHM;
 
 enum
 {
@@ -124,7 +125,7 @@ void Sh_Disp_r(task* tp)
 	if (MissedFrames)
 		return;
 
-	DrawTagHud();
+	DrawHud();
 }
 
 void Sh_Exec_r(task* tp)
@@ -172,6 +173,11 @@ void Sh_Exec_r(task* tp)
 
 	if (twp->mode != 9)
 	{
+		if (hardMode && timerHM <= 0)
+		{
+
+		}
+
 		for (uint8_t i = 0; i < actMax; i++)
 		{
 			if (tagsLeft[i] == 0)
