@@ -18,6 +18,6 @@ void init_chrModel();
 void SonicJVList();
 void initAnims();
 void initSkatingEffects();
-void initSonkEff();
+void init_Sonk();
 void init_SH();
 void init_HardMode();

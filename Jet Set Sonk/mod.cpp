@@ -5,6 +5,7 @@
 HelperFunctions HelperFunctionsGlobal;
 std::string modpath;
 std::string modName = "";
+bool isAccessoryMod = false;
 
 extern "C" {
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
@@ -18,11 +19,13 @@ extern "C" {
 				L"Jet Set Sonk Error: Mod Loader out of date", MB_OK | MB_ICONERROR);
 		}
 
+		isAccessoryMod = GetModuleHandle(L"CustomCharacters") != nullptr;
+
 		HelperFunctionsGlobal = helperFunctions; // Save the helper pointer for external use
 		modpath = path;
 		ReadConfig(path, helperFunctions);
 		init_chrModel();
-		initSonkEff();
+		init_Sonk();
 		init_SH();
 		initSH_Objects();
 		Sounds_Init();
