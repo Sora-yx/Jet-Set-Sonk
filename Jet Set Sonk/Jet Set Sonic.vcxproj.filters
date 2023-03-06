@@ -19,6 +19,12 @@
     <Filter Include="Source Files\skin">
       <UniqueIdentifier>{805a8a3a-935f-4582-9bd1-8c9e1928a219}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\audio">
+      <UniqueIdentifier>{1c48bb26-4969-40f0-8dbd-fd35cbb3d965}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\audio">
+      <UniqueIdentifier>{b69669b8-b899-4db7-a630-8c8694b7105d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -36,11 +42,14 @@
     <ClInclude Include="objects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="audio.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="tags.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sound.h">
+      <Filter>Header Files\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="jingle.h">
+      <Filter>Header Files\audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -57,9 +66,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="audio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sonk.cpp">
@@ -90,6 +96,15 @@
       <Filter>Source Files\skin</Filter>
     </ClCompile>
     <ClCompile Include="hud.cpp">
+      <Filter>Source Files\tag</Filter>
+    </ClCompile>
+    <ClCompile Include="sound.cpp">
+      <Filter>Source Files\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="jingle.cpp">
+      <Filter>Source Files\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="hardmode.cpp">
       <Filter>Source Files\tag</Filter>
     </ClCompile>
   </ItemGroup>

@@ -150,7 +150,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="audio.h" />
+    <ClInclude Include="jingle.h" />
+    <ClInclude Include="sound.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Mod.h" />
     <ClInclude Include="objects.h" />
@@ -160,7 +161,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animations.cpp" />
-    <ClCompile Include="audio.cpp" />
+    <ClCompile Include="hardmode.cpp" />
+    <ClCompile Include="jingle.cpp" />
+    <ClCompile Include="sound.cpp" />
     <ClCompile Include="chrmodel.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="dllmain.cpp" />

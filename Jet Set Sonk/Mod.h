@@ -20,3 +20,4 @@ void initAnims();
 void initSkatingEffects();
 void initSonkEff();
 void init_SH();
+void init_HardMode();

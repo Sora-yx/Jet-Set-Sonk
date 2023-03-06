@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "objects.h"
+#include "jingle.h"
 
 HelperFunctions HelperFunctionsGlobal;
 std::string modpath;
@@ -25,6 +26,8 @@ extern "C" {
 		init_SH();
 		initSH_Objects();
 		Sounds_Init();
+		init_jingle(helperFunctions);
+		init_HardMode();
 	}
 
 	__declspec(dllexport) void __cdecl OnFrame()

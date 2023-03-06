@@ -6,8 +6,8 @@ static FunctionHook<void> LoadLevelObj_t(LoadLevelObject, LoadLevelObj_r);
 
 static NJS_TEXANIM tagHudTexAnim = { 40.0f, 48.0f, 32, 32, 0, 0, 0x0FF, 0x0FF, 0, 0x20 };
 
-static const Float tX = 50.0f;
-static const Float tY = 50.0f;
+static const Float tX = 40.0f;
+static const Float tY = 40.0f;
 static NJS_TEXANIM tagHudTimer[] =
 {
 	{ tX, tY, 32, 32, 0, 0, 0x0FF, 0x0FF, 0, 0x20},
@@ -56,13 +56,11 @@ void DrawTimerHud()
 		late_DrawSprite2D(&tagTimer, firstDigit, 22046.496f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
 	}
 
-	tagTimer.p.x += 46.0f;
+	float diff = 36.0f;
+	tagTimer.p.x += diff;
 	late_DrawSprite2D(&tagTimer, timerHM % 100 / 10, 22046.496f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
-	tagTimer.p.x += 46.0f;
+	tagTimer.p.x += diff;
 	late_DrawSprite2D(&tagTimer, timerHM % 10, 22046.496f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
-	
-	if (FrameCounterUnpaused % 60 == 0)
-		timerHM--;
 }
 
 void DrawSprayHud()

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "objects.h"
 #include "tags.h"
+#include "jingle.h"
+#include "UsercallFunctionHandler.h"
 
 extern std::vector<std::string>Subtitles;
 extern std::vector<uint16_t>TimerSubtitles;
@@ -9,6 +11,10 @@ extern uint8_t copCount;
 static bool cop = false;
 static char actVisited = 0;
 extern int16_t timerHM;
+extern int16_t saveTimerHM;
+
+
+StartPosition SH1Pos = { LevelIDs_SpeedHighway, 1, {250, 48, -1}, 0 };
 
 enum
 {
@@ -59,7 +65,7 @@ void ConvertStringsToSADXFormat()
 
 	onishima_message0[0] = Subtitles.at(3).data();
 	onishima_message1[0] = Subtitles.at(4).data();
-	onishima_message2[0] = Subtitles.at(5).data();	
+	onishima_message2[0] = Subtitles.at(5).data();
 }
 
 static void Messages(task* tp)
@@ -112,11 +118,24 @@ static void Messages(task* tp)
 	}
 }
 
+
+
+
+
+void MissionClear(task* tp)
+{
+
+}
+
 void Sh_Delete_r(task* tp)
 {
 	//tagsLeft[CurrentAct] = 0;
 	resetSprayCount();
 	restoreGraffitiTexs();
+
+	if (hardMode)
+		timerHM = saveTimerHM;
+
 	isTagging = false;
 }
 
@@ -132,10 +151,7 @@ void Sh_Exec_r(task* tp)
 {
 	auto twp = tp->twp;
 
-	if (!TimeThing)
-		return;
-
-	if (tagsLeft[CurrentAct] > 0)
+	if (tagsLeft[CurrentAct] > 0 && tp->ctp->twp->mode < 2)
 	{
 		SetDebugFontSize(26);
 		DisplayDebugStringFormatted(NJM_LOCATION(2, 2), "Tags Left: %d", tagsLeft[CurrentAct]);
@@ -143,25 +159,31 @@ void Sh_Exec_r(task* tp)
 
 	char count = 0;
 
+	LoopTaskC(tp);
+
 	switch (twp->mode)
 	{
 	case 0:
 	case 1:
 	case 2:
-	if (CurrentAct == twp->mode)
-	{
-		if (++twp->wtimer == 20)
+
+		if (TimeThing)
 		{
-			twp->wtimer = 0;
-			setNumberOfTagToDo();
+			if (CurrentAct == twp->mode)
+			{
+				if (++twp->wtimer == 20)
+				{
+					twp->wtimer = 0;
+					setNumberOfTagToDo();
 
-			if (actVisited == twp->mode)
-				actVisited++;
+					if (actVisited == twp->mode)
+						actVisited++;
 
-			twp->mode++;
+					twp->mode++;
+				}
+			}
 		}
-	}
-	break;
+		break;
 	case 9:
 		if (++twp->wtimer == 60)
 		{
@@ -173,10 +195,6 @@ void Sh_Exec_r(task* tp)
 
 	if (twp->mode != 9)
 	{
-		if (hardMode && timerHM <= 0)
-		{
-
-		}
 
 		for (uint8_t i = 0; i < actMax; i++)
 		{
@@ -192,8 +210,11 @@ void Sh_Exec_r(task* tp)
 		}
 	}
 
-	tp->disp(tp);
+	if (tp->disp)
+		tp->disp(tp);
 }
+
+void TimeOver(task* tp);
 
 void Rd_Highway_r(task* tp)
 {
@@ -203,6 +224,7 @@ void Rd_Highway_r(task* tp)
 	{
 		exec->disp = Sh_Disp_r;
 		exec->dest = Sh_Delete_r;
+		CreateChildTask(2, TimeOver, exec);
 	}
 
 	if (!Subtitles.empty() && !cop)
@@ -219,4 +241,6 @@ void init_SH()
 		return;
 
 	RoundMasterList[LevelIDs_SpeedHighway] = Rd_Highway_r;
+	HelperFunctionsGlobal.RegisterStartPosition(Characters_Sonic, SH1Pos);
+
 }

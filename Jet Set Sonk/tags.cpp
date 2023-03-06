@@ -33,7 +33,6 @@ void saveGraffitiTexs()
 	}
 }
 
-
 enum //tag store data task 
 {
 	tagHP,

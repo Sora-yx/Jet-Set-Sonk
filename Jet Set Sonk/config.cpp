@@ -6,6 +6,7 @@ uint8_t actCount = 3;
 uint8_t copCount = 4;
 NJS_POINT3 goalPos[actMax]{ 0, 0, 0 };
 int16_t timerHM = 300;
+int16_t saveTimerHM = 300;
 
 void ReadInfo(const char* path, const HelperFunctions& helperFunction)
 {
@@ -45,6 +46,8 @@ void ReadInfo(const char* path, const HelperFunctions& helperFunction)
 		timerHM = 999;
 	else if (timerHM <= 20)
 		timerHM = 100; //don't be silly
+
+	saveTimerHM = timerHM;
 
 	count = 0;
 }

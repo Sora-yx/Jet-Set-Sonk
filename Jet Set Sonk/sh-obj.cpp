@@ -5,6 +5,8 @@
 static NJS_TEXNAME graffitiTex[11]{ 0 };
 NJS_TEXLIST graffitiTexlist = { arrayptrandlength(graffitiTex) };
 
+extern NJS_TEXLIST timeOverTexlist;
+
 
 void BackRing(task* tp)
 {
@@ -25,6 +27,7 @@ PVMEntry SpeedHighwayObjectTextures[] = {
 	{ "UNI_A_UNIBODY", (TexList*)0x96CB5C },
 	{ "TOGEBALL_TOGEBALL", (TexList*)0x96BC54 },
 	{ "graffitiTex", &graffitiTexlist},
+	{ "timeOver" , &timeOverTexlist},
 	{ 0 }
 };
 

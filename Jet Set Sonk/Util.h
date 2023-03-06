@@ -36,7 +36,12 @@ FunctionPointer(int, SetCPFlag, (task* a1), 0x46C110);
 FunctionPointer(void, CreateWater, (NJS_POINT3* pos, NJS_POINT3* spd, float scl), 0x4B9540);
 TaskFunc(SetFlagNoRespawn, 0x46C100);
 FunctionPointer(void, SetLookingPoint, (unsigned __int8 player, NJS_POINT3* a2), 0x441000);
-
+VoidFunc(savepointPrintLaptime, 0x44F2D0);
+VoidFunc(PlayMenuBipSound, 0x6FC8A0);
+VoidFunc(PlayMenuEnterSound, 0x505810);
+VoidFunc(PlayMenuBackSound, 0x505830);
+DataPointer(char, SoftResetByte, 0x3B0EAA0);
+FunctionPointer(Sint32, DeleteLandAndObj, (), 0x414090);
 void ResetPlayerLook(uint8_t pnum);
 
 bool IsPathExist(const std::string& s);
