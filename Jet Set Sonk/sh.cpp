@@ -14,7 +14,7 @@ extern int16_t timerHM;
 extern int16_t saveTimerHM;
 
 
-StartPosition SH1Pos = { LevelIDs_SpeedHighway, 1, {250, 48, -1}, 0 };
+StartPosition SH1Pos = { LevelIDs_SpeedHighway, 1, {-220, 42, 0}, 0 };
 
 enum
 {
@@ -117,8 +117,6 @@ static void Messages(task* tp)
 		return;
 	}
 }
-
-
 
 
 

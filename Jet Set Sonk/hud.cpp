@@ -36,7 +36,7 @@ void DrawTimerHud()
 	if (!hardMode || timerHM <= 0 || !TimeThing)
 		return;
 
-	tagTimer.p.x = HorizontalStretch * 640.0f / 1.5f;
+	tagTimer.p.x = HorizontalStretch * 640.0f / 1.3f;
 	tagTimer.p.y = 64.0f;
 
 	if (timerHM < 100)
