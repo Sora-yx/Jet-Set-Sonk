@@ -6,6 +6,10 @@ ModelInfo* jumpBall = nullptr;
 ModelInfo* curled = nullptr;
 ModelInfo* eventHead = nullptr;
 
+//upgrades
+ModelInfo* crystalRing = nullptr;
+ModelInfo* wristCrystalRing = nullptr;
+
 AnimationFile* faceMotion = nullptr;
 
 void replaceSonkActions()
@@ -123,6 +127,11 @@ void replaceSonkObjects()
 	SONIC_OBJECTS[62] = root->getnode(28);
 	SONIC_OBJECTS[66] = curled->getmodel();
 	SONIC_OBJECTS[67] = jumpBall->getmodel();
+
+	//upgrades
+	SONIC_OBJECTS[63] = wristCrystalRing->getmodel();
+	SONIC_OBJECTS[63]->sibling = SONIC_OBJECTS[4]; //fix welds
+	SONIC_OBJECTS[64] = crystalRing->getmodel();
 }
 
 void ReplaceFaceMotion()
@@ -143,6 +152,9 @@ void init_chrModel()
 	jumpBall = LoadBasicModel("jumpBall");
 	eventHead = LoadBasicModel("eventHead");
 	curled = LoadBasicModel("curled");
+
+	crystalRing = LoadBasicModel("crystalRing");
+	wristCrystalRing = LoadBasicModel("wristCrystalRing");
 
 	if (rootMdl)
 	{
