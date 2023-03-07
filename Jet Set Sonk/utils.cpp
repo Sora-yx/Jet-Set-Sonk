@@ -247,3 +247,9 @@ void ResetScaleUI()
 {
 	HelperFunctionsGlobal.PopScaleUI();
 }
+
+
+Float randomFloat()
+{
+	return (Float)rand() / RAND_MAX;
+}

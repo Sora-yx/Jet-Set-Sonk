@@ -49,7 +49,7 @@ enum //tag task enum
 	done,
 };
 
-static uint8_t sprayNeeded[3] = {
+static const uint8_t sprayNeeded[3] = {
 	1, //small
 	3, //normal
 	6 //large

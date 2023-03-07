@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "objects.h"
 #include "tags.h"
+#include "UsercallFunctionHandler.h"
 
 CCL_INFO SprayCollision = { 0, 0x0, 0xb0, 0x0, 0x0, { 0.0, 3.0, 0.0 }, 5.0, 0.0, 0.0, 0.0, 0, 0, 0 };
 CCL_INFO SprayCollisionL = { 0, 0x0, 0xb0, 0x0, 0x0, { 0.0, 6.0, 0.0 }, 8.0, 0.0, 0.0, 0.0, 0, 0, 0 };
@@ -11,6 +12,8 @@ uint8_t sprayPaintCount[pMax]{ 0 };
 extern NJS_MATRIX rightFingers;
 extern NJS_POINT3 curTagPos[];
 
+auto PlayerVacumedRing = GenerateUsercallWrapper<signed int (*)(taskwk* a1)>(rEAX, 0x44FA90, rEDI);
+
 void resetSprayCount()
 {
 	for (uint8_t i = 0; i < pMax; i++)
@@ -19,6 +22,7 @@ void resetSprayCount()
 	}
 }
 
+
 void SprayExec(task* tp)
 {
 	if (!isTagging)
@@ -26,15 +30,18 @@ void SprayExec(task* tp)
 		FreeTask(tp);
 		return;
 	}
-		
+
 	auto twp = tp->twp;
 
 	NJS_POINT3 scl = { 0.0f, 0.0f, 0.0f };
 
 	LookAt(&twp->pos, &twp->scl, &twp->ang.x, &twp->ang.y);
 	MoveForward(twp, 2.0f);
-
-	CreateWater(&twp->pos, &scl, 0.8f);
+	auto backup = particleWater;
+	NJS_POINT3 RGB = { randomFloat(), randomFloat(), randomFloat() };
+	particleWater.argb = { 1.0f, RGB.x, RGB.y, RGB.z };
+	CreateWater(&twp->pos, &scl, 0.5f);
+	particleWater = backup;
 }
 
 void drawSprayPaintHand(taskwk* twp, playerwk* pwp)
@@ -147,7 +154,7 @@ void sprayPaint_Exec(task* tp)
 
 		twp->mode = 1;
 		break;
-	case 1:
+	case 1:	
 		twp->ang.y += 800;
 		player = (taskwk*)GetCollidingEntityA((EntityData1*)twp);
 		if (player)
@@ -175,7 +182,9 @@ void sprayPaint_Exec(task* tp)
 	if (twp->mode == 1)
 	{
 		tp->disp(tp);
-		EntryColliList(twp);
+
+		if (!PlayerVacumedRing(twp))
+			EntryColliList(twp);
 	}
 }
 

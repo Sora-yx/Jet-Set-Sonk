@@ -16,6 +16,7 @@
 #include "AnimationFile.h"
 #include "IniFile.hpp"
 #include "FunctionHook.h"
+#include "sadx-util.h"
 
 #include "mod.h"
 #include "util.h"

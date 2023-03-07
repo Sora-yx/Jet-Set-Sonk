@@ -2,7 +2,6 @@
 #include "objects.h"
 #include "tags.h"
 #include "jingle.h"
-#include "UsercallFunctionHandler.h"
 
 extern std::vector<std::string>Subtitles;
 extern std::vector<uint16_t>TimerSubtitles;
@@ -12,7 +11,6 @@ static bool cop = false;
 static char actVisited = 0;
 extern int16_t timerHM;
 extern int16_t saveTimerHM;
-
 
 StartPosition SH1Pos = { LevelIDs_SpeedHighway, 1, {-220, 42, 0}, 0 };
 
@@ -117,7 +115,6 @@ static void Messages(task* tp)
 		return;
 	}
 }
-
 
 
 void MissionClear(task* tp)

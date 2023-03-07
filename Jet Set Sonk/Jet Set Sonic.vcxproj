@@ -151,6 +151,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="jingle.h" />
+    <ClInclude Include="sadx-util.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Mod.h" />

@@ -51,6 +51,9 @@
     <ClInclude Include="jingle.h">
       <Filter>Header Files\audio</Filter>
     </ClInclude>
+    <ClInclude Include="sadx-util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
