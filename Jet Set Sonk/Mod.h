@@ -21,3 +21,4 @@ void initSkatingEffects();
 void init_Sonk();
 void init_SH();
 void init_HardMode();
+void initMissionsCardsHack();

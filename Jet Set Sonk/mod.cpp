@@ -31,6 +31,7 @@ extern "C" {
 		Sounds_Init();
 		init_jingle(helperFunctions);
 		init_HardMode();
+		initMissionsCardsHack();
 	}
 
 	__declspec(dllexport) void __cdecl OnFrame()

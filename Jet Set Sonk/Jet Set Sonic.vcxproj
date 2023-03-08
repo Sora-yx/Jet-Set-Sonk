@@ -166,6 +166,7 @@
     <ClCompile Include="backRing.cpp" />
     <ClCompile Include="hardmode.cpp" />
     <ClCompile Include="jingle.cpp" />
+    <ClCompile Include="missionCards.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="chrmodel.cpp" />
     <ClCompile Include="config.cpp" />

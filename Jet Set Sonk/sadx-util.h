@@ -24,3 +24,5 @@ FunctionPointer(Sint32, DeleteLandAndObj, (), 0x414090);
 
 DataPointer(particle_info, particleWater, 0x97E27C);
 
+
+DataPointer(NJS_TEXANIM, MissionSpriteAnim, 0x917784);
