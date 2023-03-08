@@ -147,10 +147,14 @@ void Sh_Exec_r(task* tp)
 {
 	auto twp = tp->twp;
 
-	if (tagsLeft[CurrentAct] > 0 && tp->ctp->twp->mode < 2)
+	if (tagsLeft[CurrentAct] > 0)
 	{
-		SetDebugFontSize(26);
-		DisplayDebugStringFormatted(NJM_LOCATION(2, 2), "Tags Left: %d", tagsLeft[CurrentAct]);
+		if (!tp->ctp || tp->ctp->twp->mode < 2)
+		{
+			SetDebugFontSize(26);
+			DisplayDebugStringFormatted(NJM_LOCATION(2, 2), "Tags Left: %d", tagsLeft[CurrentAct]);
+		}
+
 	}
 
 	char count = 0;
@@ -224,7 +228,9 @@ void Rd_Highway_r(task* tp)
 			{
 				exec->disp = Sh_Disp_r;
 				exec->dest = Sh_Delete_r;
-				CreateChildTask(2, TimeOver, exec);
+
+				if (hardMode)
+					CreateChildTask(2, TimeOver, exec);
 			}
 
 			if (!Subtitles.empty() && !cop)
