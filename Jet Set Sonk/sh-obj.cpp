@@ -1,17 +1,14 @@
 #include "pch.h"
 #include "objects.h"
 #include "tags.h"
+#include "backring.h"
 
 static NJS_TEXNAME graffitiTex[11]{ 0 };
 NJS_TEXLIST graffitiTexlist = { arrayptrandlength(graffitiTex) };
 
 extern NJS_TEXLIST timeOverTexlist;
+extern NJS_TEXLIST GoalRingTextures;
 
-
-void BackRing(task* tp)
-{
-
-}
 
 PVMEntry SpeedHighwayObjectTextures[] = {
 	{ "OBJ_HIGHWAY", (TexList*)0x26703F0 },
@@ -28,6 +25,7 @@ PVMEntry SpeedHighwayObjectTextures[] = {
 	{ "TOGEBALL_TOGEBALL", (TexList*)0x96BC54 },
 	{ "graffitiTex", &graffitiTexlist},
 	{ "timeOver" , &timeOverTexlist},
+	{ "BACKRING", &GoalRingTextures },
 	{ 0 }
 };
 

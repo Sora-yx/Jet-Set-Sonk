@@ -2,6 +2,7 @@
 #include "objects.h"
 #include "tags.h"
 #include "jingle.h"
+#include "backring.h"
 
 extern std::vector<std::string>Subtitles;
 extern std::vector<uint16_t>TimerSubtitles;
@@ -230,6 +231,8 @@ void Rd_Highway_r(task* tp)
 			{
 				CreateElementalTask(3, 2, Messages);
 			}
+
+			backRingRestoreData();
 			break;
 		}
 	}
@@ -244,5 +247,4 @@ void init_SH()
 
 	RoundMasterList[LevelIDs_SpeedHighway] = Rd_Highway_r;
 	HelperFunctionsGlobal.RegisterStartPosition(Characters_Sonic, SH1Pos);
-
 }

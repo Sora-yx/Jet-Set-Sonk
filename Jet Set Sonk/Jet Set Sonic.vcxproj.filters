@@ -54,6 +54,9 @@
     <ClInclude Include="sadx-util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="backring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -108,6 +111,9 @@
       <Filter>Source Files\audio</Filter>
     </ClCompile>
     <ClCompile Include="hardmode.cpp">
+      <Filter>Source Files\tag</Filter>
+    </ClCompile>
+    <ClCompile Include="backRing.cpp">
       <Filter>Source Files\tag</Filter>
     </ClCompile>
   </ItemGroup>

@@ -94,6 +94,20 @@ void TimeOverDisp(task* tp)
 	ResetScaleUI();
 }
 
+void ResetLevel()
+{
+	DeleteLandAndObj();
+	Set0Rings();
+	PauseEnabled = 0;
+	ResetTime();
+	DisableTimeThing();
+	ResetBigStuff();
+	ResetRestartData();
+	ResetGravity();
+	CurrentLevel = LevelCopy;
+	CurrentAct = ActCopy;
+	GameState = 21;
+}
 
 void TimeOver(task* tp)
 {
@@ -163,17 +177,7 @@ void TimeOver(task* tp)
 			else if (PressedButtons[0] & (Buttons_A | Buttons_Start))
 			{
 				PlayMenuEnterSound();
-				DeleteLandAndObj();
-				Set0Rings();
-				PauseEnabled = 0;
-				ResetTime();
-				DisableTimeThing();
-				ResetBigStuff();
-				ResetRestartData();
-				ResetGravity();
-				CurrentLevel = LevelCopy;
-				CurrentAct = ActCopy;
-				GameState = 21;
+				ResetLevel();
 				return;
 			}
 		}

@@ -150,6 +150,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="backring.h" />
     <ClInclude Include="jingle.h" />
     <ClInclude Include="sadx-util.h" />
     <ClInclude Include="sound.h" />
@@ -162,6 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animations.cpp" />
+    <ClCompile Include="backRing.cpp" />
     <ClCompile Include="hardmode.cpp" />
     <ClCompile Include="jingle.cpp" />
     <ClCompile Include="sound.cpp" />
