@@ -22,7 +22,6 @@ void resetSprayCount()
 	}
 }
 
-
 void SprayExec(task* tp)
 {
 	if (!isTagging)
@@ -37,11 +36,11 @@ void SprayExec(task* tp)
 
 	LookAt(&twp->pos, &twp->scl, &twp->ang.x, &twp->ang.y);
 	MoveForward(twp, 2.0f);
-	auto backup = particleWater;
-	NJS_POINT3 RGB = { randomFloat(), randomFloat(), randomFloat() };
-	particleWater.argb = { 1.0f, RGB.x, RGB.y, RGB.z };
+	auto backup = particleWater.argb;
+	NJS_RGB RGB = { randomFloat(), randomFloat(), randomFloat() };
+	particleWater.argb = { 1.0f, RGB.r, RGB.g, RGB.b };
 	CreateWater(&twp->pos, &scl, 0.5f);
-	particleWater = backup;
+	particleWater.argb = backup;
 }
 
 void drawSprayPaintHand(taskwk* twp, playerwk* pwp)

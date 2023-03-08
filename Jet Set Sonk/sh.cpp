@@ -213,18 +213,25 @@ void TimeOver(task* tp);
 
 void Rd_Highway_r(task* tp)
 {
-	task* exec = CreateElementalTask(2, 2, Sh_Exec_r);
-
-	if (exec)
+	for (uint8_t i = 0; i < pMax; i++)
 	{
-		exec->disp = Sh_Disp_r;
-		exec->dest = Sh_Delete_r;
-		CreateChildTask(2, TimeOver, exec);
-	}
+		if (playertwp[i] && playertwp[i]->counter.b[1] == Characters_Sonic)
+		{
+			task* exec = CreateElementalTask(2, 2, Sh_Exec_r);
 
-	if (!Subtitles.empty() && !cop)
-	{
-		CreateElementalTask(3, 2, Messages);
+			if (exec)
+			{
+				exec->disp = Sh_Disp_r;
+				exec->dest = Sh_Delete_r;
+				CreateChildTask(2, TimeOver, exec);
+			}
+
+			if (!Subtitles.empty() && !cop)
+			{
+				CreateElementalTask(3, 2, Messages);
+			}
+			break;
+		}
 	}
 
 	tp->exec = (TaskFuncPtr)Obj_SpeedHighway;
