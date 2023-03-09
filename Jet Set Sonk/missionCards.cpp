@@ -5,6 +5,14 @@ NJS_TEXNAME MissionCardsTex[2]{ NULL };
 static FunctionHook<void> MissionCard_Result_t(0x457BB0);
 static FunctionHook<void> LoadMissionImage_t(0x457450);
 
+void SetMissionCardTexture()
+{
+	StageMissionTexlist.textures = MissionCardsTex;
+	StageMissionTexlist.nbTexture = 1;
+	LoadPVM("missionCards", &StageMissionTexlist);
+	MissionSpriteAnim.texid = hardMode ? 1 : 0;
+}
+
 void MissionCard_Result_r()
 {
 	if (CurrentLevel != LevelIDs_SpeedHighway || CurrentCharacter != Characters_Sonic)
@@ -12,11 +20,8 @@ void MissionCard_Result_r()
 		return MissionCard_Result_t.Original();
 	}
 
-	//edit the texlit of the mission card to make it use our card instead
-	StageMissionTexlist.textures = MissionCardsTex;
-	StageMissionTexlist.nbTexture = 1;
-	LoadPVM("missionCards", &StageMissionTexlist);
-	MissionSpriteAnim.texid = hardMode ? 1 : 0;
+	//edit the texlist of the mission card to make it use our card instead
+	SetMissionCardTexture(); 
 
 	//load the task which will diplay the mission card
 	task* tp = CreateElementalTask(LoadObj_Data1, 6, (TaskFuncPtr)0x457B60);
@@ -35,11 +40,8 @@ void LoadMissionImage_r()
 		return LoadMissionImage_t.Original();
 	}
 
-	//edit the texlit of the mission card to make it use our card instead
-	StageMissionTexlist.textures = MissionCardsTex;
-	StageMissionTexlist.nbTexture = 1;
-	LoadPVM("missionCards", &StageMissionTexlist);
-	MissionSpriteAnim.texid = hardMode ? 1 : 0;
+	//edit the texlist of the mission card to make it use our card instead
+	SetMissionCardTexture();
 
 	//load the task which will diplay the mission card
 	task* task = CreateElementalTask(LoadObj_Data1, 6, (TaskFuncPtr)0x457B60);
