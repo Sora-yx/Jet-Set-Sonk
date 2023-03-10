@@ -15,8 +15,9 @@ void SetMissionCardTexture()
 
 void MissionCard_Result_r()
 {
-	if (CurrentLevel != LevelIDs_SpeedHighway || CurrentCharacter != Characters_Sonic)
+	if (!isTagLevel() || CurrentCharacter != Characters_Sonic)
 	{
+		MissionSpriteAnim.texid = 0;
 		return MissionCard_Result_t.Original();
 	}
 
@@ -35,8 +36,9 @@ void MissionCard_Result_r()
 
 void LoadMissionImage_r()
 {
-	if (CurrentLevel != LevelIDs_SpeedHighway || CurrentCharacter != Characters_Sonic)
+	if (!isTagLevel() || CurrentCharacter != Characters_Sonic)
 	{
+		MissionSpriteAnim.texid = 0;
 		return LoadMissionImage_t.Original();
 	}
 
