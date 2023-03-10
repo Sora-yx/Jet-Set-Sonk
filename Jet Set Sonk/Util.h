@@ -31,3 +31,5 @@ void ResetSpriteParam();
 void ScaleUI(uiscale::Align type);
 void ResetScaleUI();
 Float randomFloat();
+bool isTailsAI(uint8_t pnum);
+bool isTagLevel();

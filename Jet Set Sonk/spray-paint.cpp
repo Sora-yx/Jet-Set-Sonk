@@ -159,7 +159,7 @@ void sprayPaint_Exec(task* tp)
 		if (player)
 		{
 			//if Miles AI grab a spray, give it to Sonk
-			if (player == playertwp[1] && TailsAI_ptr->Data1->CharIndex == 1)
+			if (isTailsAI(player->counter.b[0]))
 				sprayPaintAdd(0, count);
 			else
 				sprayPaintAdd(player->counter.b[0], count);

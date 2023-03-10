@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "objects.h"
+#include "tags.h"
 
 //hack Sonk Display function to add objects, effects etc.
 
@@ -20,6 +21,7 @@ enum
 	curled = 66
 };
 
+TaskHook SonicExec_t(SonicTheHedgehog);
 TaskHook SonicDisplay_t(SonicDisplay);
 
 void (*backupCallback)(NJS_OBJECT* obj) = NULL;
@@ -98,6 +100,17 @@ static void SonkDisplay_r(task* tp)
 	*NodeCallbackFuncPtr = *backupCallback; //restore
 }
 
+static void SonkExec_r(task* tp)
+{
+	SonicExec_t.Original(tp);
+
+	auto twp = tp->twp;
+	auto pwp = (playerwk*)tp->mwp->work.l;
+
+	if ( (twp->flag & Status_Ground) && twp->mode <= 2)
+		out_TagCheckInput(twp, pwp);
+}
+
 void initHeadObjects()
 {
 	if (isAccessoryMod)
@@ -109,6 +122,8 @@ void initHeadObjects()
 
 void init_Sonk()
 {
+	SonicExec_t.Hook(SonkExec_r);
 	SonicDisplay_t.Hook(SonkDisplay_r);
+	HelperFunctionsGlobal.RegisterCharacterPVM(Characters_Sonic, graphPVM);
 	initHeadObjects();
 }

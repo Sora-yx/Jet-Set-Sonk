@@ -253,3 +253,18 @@ Float randomFloat()
 {
 	return (Float)rand() / RAND_MAX;
 }
+
+bool isTailsAI(uint8_t pnum)
+{
+	if (playertp[pnum] && playertwp[pnum]->counter.b[1] == Characters_Tails && TailsAI_ptr && TailsAI_ptr->Data1->CharIndex == pnum)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool isTagLevel()
+{
+	return CurrentLevel == LevelIDs_SpeedHighway;
+}

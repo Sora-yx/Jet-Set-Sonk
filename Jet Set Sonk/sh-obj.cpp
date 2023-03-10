@@ -3,9 +3,6 @@
 #include "tags.h"
 #include "backring.h"
 
-static NJS_TEXNAME graffitiTex[11]{ 0 };
-NJS_TEXLIST graffitiTexlist = { arrayptrandlength(graffitiTex) };
-
 extern NJS_TEXLIST timeOverTexlist;
 extern NJS_TEXLIST GoalRingTextures;
 
@@ -23,7 +20,6 @@ PVMEntry SpeedHighwayObjectTextures[] = {
 	{ "BANB", (TexList*)0x93A8BC },
 	{ "UNI_A_UNIBODY", (TexList*)0x96CB5C },
 	{ "TOGEBALL_TOGEBALL", (TexList*)0x96BC54 },
-	{ "graffitiTex", &graffitiTexlist},
 	{ "timeOver" , &timeOverTexlist},
 	{ "BACKRING", &GoalRingTextures },
 	{ 0 }

@@ -2,6 +2,11 @@
 #include "objects.h"
 #include "tags.h"
 
+static NJS_TEXNAME graffitiTex[11]{ 0 };
+NJS_TEXLIST graffitiTexlist = { arrayptrandlength(graffitiTex) };
+
+PVMEntry graphPVM = { "graffitiTex", &graffitiTexlist };
+
 static constexpr uint8_t tagMdlCount = 3;
 
 static ModelInfo* tagMdls[tagMdlCount]{ nullptr };
@@ -163,7 +168,7 @@ void ChildArrow(task* tp)
 	tp->disp(tp);
 }
 
-void UpdateGraffiti(task* tp, uint8_t pnum)
+void UpdateGraffiti(task* tp)
 {
 	auto twp = tp->twp;
 	twp->counter.b[tagHP]++;
@@ -220,19 +225,19 @@ void DoGraffiti(uint8_t pnum, task* tp)
 	}
 }
 
-void CheckGraffitiInput(task* tp, NJS_POINT3 pos, uint8_t pnum)
+void CheckGraffitiInput(task* tp, NJS_POINT3 pos)
 {
-	if (CheckCollisionP(&pos, 35.0f))
+	int pnum = CheckCollisionP(&pos, 35.0f) - 1;
+	if (pnum >= 0)
 	{
 		if (Controllers[pnum].PressedButtons & Buttons_Y)
 		{
 			playertwp[pnum]->flag |= Status_DoNextAction;
-			playertwp[pnum]->smode = 20;
+			playertwp[pnum]->smode = 12;
 			DoGraffiti(pnum, tp);
 		}
 	}
 }
-
 
 void tag_Disp(task* tp)
 {
@@ -274,6 +279,7 @@ void tag_Exec(task* tp)
 
 	const uint8_t id = static_cast<uint8_t>(twp->scl.x);
 	uint8_t pnum = GetTheNearestPlayerNumber(&twp->pos);
+
 	const uint8_t hpMAX = sprayNeeded[id];
 	const NJS_MODEL_SADX* mdl = (NJS_MODEL_SADX*)tagMdls[id]->getmodel()->model;
 
@@ -301,7 +307,7 @@ void tag_Exec(task* tp)
 		twp->mode++;
 		break;
 	case checkInput:
-		CheckGraffitiInput(tp, twp->pos, pnum);
+		CheckGraffitiInput(tp, twp->pos);
 		break;
 	case wait:
 		playerpwp[pnum]->mj.reqaction = 131;
@@ -310,7 +316,7 @@ void tag_Exec(task* tp)
 
 		if (twp->wtimer == 10)
 		{
-			UpdateGraffiti(tp, pnum);
+			UpdateGraffiti(tp);
 		}
 		else if (twp->wtimer == 20)
 		{
@@ -334,6 +340,118 @@ void tag_Exec(task* tp)
 	LoopTaskC(tp);
 	tp->disp(tp);
 }
+
+void Update_OutGraffiti(task* tp)
+{
+
+	PlayCustomSoundVolume(sprayPaintSnd, 2.0f);
+
+}
+
+void OutTag_Disp(task* tp)
+{
+	auto twp = tp->twp;
+
+	if (MissedFrames || twp->mode < 2 ||  twp->mode == 2 && twp->wtimer < 15)
+		return;
+
+	const uint8_t id = 0;
+	uint8_t texID = 1;
+	NJS_MODEL_SADX* mdl = (NJS_MODEL_SADX*)tagMdls[id]->getmodel()->model;
+
+	if (!mdl)
+		return;
+
+	mdl->mats[0].attr_texId = texID - (sprayNeeded[id]) + 1;
+
+	njSetTexture(&graffitiTexlist);
+	njPushMatrix(0);
+	njTranslateV(0, &twp->pos);
+	njRotateZ(0, twp->ang.z);
+	njRotateX(0, twp->ang.x);
+	njRotateY(0, twp->ang.y);
+	dsDrawObject(tagMdls[id]->getmodel());
+	njPopMatrix(1u);
+}
+
+void outTag_Exec(task* tp)
+{
+	auto twp = tp->twp;
+
+	const uint8_t id = 0;
+	auto pnum = twp->counter.b[0];
+	const uint8_t hpMAX = sprayNeeded[id];
+	const NJS_MODEL_SADX* mdl = (NJS_MODEL_SADX*)tagMdls[id]->getmodel()->model;
+
+	switch (twp->mode)
+	{
+	case 0:
+		tp->disp = OutTag_Disp;
+		curTagPos[pnum] = twp->pos;
+		twp->mode++;
+		break;
+	case 1:
+		if (++twp->wtimer == 5)
+		{
+			twp->wtimer = 0;
+			isTagging = true;		
+			playerpwp[pnum]->mj.reqaction = 130;
+			twp->mode++;
+		}
+		break;
+	case 2:
+
+		++twp->wtimer;
+
+		if (twp->wtimer == 10)
+		{
+			Update_OutGraffiti(tp);
+		}
+		else if (twp->wtimer == 20)
+		{
+			twp->wtimer = 0;
+			PlayCustomSoundVolume(smallTagSnd, 1.0f);
+			ResetPlayerLook(pnum);
+			isTagging = false;
+			playertwp[pnum]->mode = 1;
+			twp->mode = done;
+		}
+		break;
+	}
+
+	tp->disp(tp);
+}
+
+signed int out_TagCheckInput(taskwk* Ptwp, playerwk* pwp)
+{
+	auto pnum = Ptwp->counter.b[0];
+
+	if (Controllers[pnum].PressedButtons & Buttons_Y && !isTagging && !isTagLevel())
+	{
+		Ptwp->mode = 195;
+		task* tp = CreateElementalTask(2, 2, outTag_Exec);
+
+		if (tp)
+		{
+			auto twp = tp->twp;
+
+			twp->counter.b[0] = pnum;
+
+			twp->pos = { Ptwp->pos.x + 9, pwp->shadow.y_bottom + 0.3f, Ptwp->pos.z + rand() % 5 + 8 };
+			twp->ang = { pwp->shadow.angx, Ptwp->ang.y, pwp->shadow.angz };
+			SetLookingPoint(pnum, &twp->pos);
+			Ptwp->ang.y = twp->ang.y;
+
+			PlayerLookAt(&Ptwp->pos, &twp->pos, 0, &Ptwp->ang.y);
+			PClearSpeed(playermwp[pnum], pwp);
+			return TRUE;
+		}
+
+	}
+
+	return FALSE;
+}
+
 
 void initGraffitiMdl()
 {
