@@ -32,6 +32,7 @@ extern "C" {
 		init_jingle(helperFunctions);
 		init_HardMode();
 		initMissionsCardsHack();
+		InitTornado();
 	}
 
 	__declspec(dllexport) void __cdecl OnFrame()

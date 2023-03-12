@@ -11,8 +11,8 @@ NJS_MATRIX leftHeelMtx;
 NJS_MATRIX rightFingers;
 NJS_MATRIX headMtx;
 
-static ModelInfo* headPhone = nullptr;
-static ModelInfo* goggles = nullptr;
+ModelInfo* headPhone = nullptr;
+ModelInfo* goggles = nullptr;
 
 enum
 {
@@ -62,7 +62,6 @@ static void SonkCallBack(NJS_OBJECT* obj)
 		backupCallback(obj);
 }
 
-extern bool isAccessoryMod;
 void DrawHeadItems()
 {
 	if (isAccessoryMod)

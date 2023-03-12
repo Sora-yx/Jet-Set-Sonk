@@ -185,6 +185,7 @@
     <ClCompile Include="skating-eff.cpp" />
     <ClCompile Include="sonk.cpp" />
     <ClCompile Include="spray-paint.cpp" />
+    <ClCompile Include="tornado.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="welds.cpp" />
   </ItemGroup>

@@ -14,6 +14,9 @@ extern std::string modpath;
 extern bool tagLvl;
 extern bool hardMode;
 extern HelperFunctions HelperFunctionsGlobal;
+
+extern bool isAccessoryMod;
+
 void init_chrModel();
 void SonicJVList();
 void initAnims();
@@ -22,3 +25,4 @@ void init_Sonk();
 void init_SH();
 void init_HardMode();
 void initMissionsCardsHack();
+void InitTornado();
