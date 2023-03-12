@@ -208,6 +208,7 @@ void DoGraffiti(uint8_t pnum, task* tp)
 	if (sprayPaintCount[pnum] > 0)
 	{
 		curTagPos[pnum] = twp->pos;
+		curTagPos[pnum].x += rand() % 2 ? 10.0f : 0.0f;
 		isTagging = true;
 		sprayPaintCount[pnum]--;
 		SetLookingPoint(pnum, &twp->pos);
@@ -352,7 +353,7 @@ void OutTag_Disp(task* tp)
 {
 	auto twp = tp->twp;
 
-	if (MissedFrames || twp->mode < 2 ||  twp->mode == 2 && twp->wtimer < 15)
+	if (MissedFrames || twp->mode < 2 || twp->mode == 2 && twp->wtimer < 15)
 		return;
 
 	const uint8_t id = 0;
@@ -362,16 +363,21 @@ void OutTag_Disp(task* tp)
 	if (!mdl)
 		return;
 
+	Angle3 ang;
 	mdl->mats[0].attr_texId = texID - (sprayNeeded[id]) + 1;
 
 	njSetTexture(&graffitiTexlist);
 	njPushMatrix(0);
-	njTranslateV(0, &twp->pos);
-	njRotateZ(0, twp->ang.z);
-	njRotateX(0, twp->ang.x);
-	njRotateY(0, twp->ang.y);
+	Float Y = GetShadowPos(twp->pos.x, twp->pos.y + 4.0f, twp->pos.z, &ang);
+	Y += 0.007f;
+	njTranslate(0, twp->pos.x, Y, twp->pos.z);
+	njRotateZ(0, ang.z);
+	njRotateX(0, ang.x);
+	njRotateY(0, -(ang.y));
 	dsDrawObject(tagMdls[id]->getmodel());
 	njPopMatrix(1u);
+
+
 }
 
 void outTag_Exec(task* tp)
@@ -394,7 +400,7 @@ void outTag_Exec(task* tp)
 		if (++twp->wtimer == 5)
 		{
 			twp->wtimer = 0;
-			isTagging = true;		
+			isTagging = true;
 			playerpwp[pnum]->mj.reqaction = 130;
 			twp->mode++;
 		}
@@ -437,7 +443,7 @@ signed int out_TagCheckInput(taskwk* Ptwp, playerwk* pwp)
 
 			twp->counter.b[0] = pnum;
 
-			twp->pos = { Ptwp->pos.x + 9, pwp->shadow.y_bottom + 0.3f, Ptwp->pos.z + rand() % 5 + 8 };
+			twp->pos = { Ptwp->pos.x + 10.0f, pwp->shadow.y_bottom + 0.3f, Ptwp->pos.z + 10.0f };
 			twp->ang = { pwp->shadow.angx, Ptwp->ang.y, pwp->shadow.angz };
 			SetLookingPoint(pnum, &twp->pos);
 			Ptwp->ang.y = twp->ang.y;

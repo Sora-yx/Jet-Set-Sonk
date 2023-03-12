@@ -9,6 +9,7 @@ CCL_INFO SprayCollisionL = { 0, 0x0, 0xb0, 0x0, 0x0, { 0.0, 6.0, 0.0 }, 8.0, 0.0
 static ModelInfo* sprayMdl = nullptr;
 static ModelInfo* sprayHoldMdl = nullptr;
 uint8_t sprayPaintCount[pMax]{ 0 };
+uint8_t sprayInteralTimer[pMax]{ 0 };
 extern NJS_MATRIX rightFingers;
 extern NJS_POINT3 curTagPos[];
 
@@ -22,15 +23,27 @@ void resetSprayCount()
 	}
 }
 
+void SprayDel(task* tp)
+{
+	isTagging = false;
+	auto twp = tp->twp;
+	auto pnum = twp->counter.b[0];
+	sprayInteralTimer[pnum] = 0;
+}
+
 void SprayExec(task* tp)
 {
+	auto twp = tp->twp;
+	auto pnum = twp->counter.b[0];
+
 	if (!isTagging)
 	{
 		FreeTask(tp);
 		return;
 	}
 
-	auto twp = tp->twp;
+	if (++sprayInteralTimer[pnum] < 50)
+		return;
 
 	NJS_POINT3 scl = { 0.0f, 0.0f, 0.0f };
 
@@ -39,7 +52,7 @@ void SprayExec(task* tp)
 	auto backup = particleWater.argb;
 	NJS_RGB RGB = { randomFloat(), randomFloat(), randomFloat() };
 	particleWater.argb = { 1.0f, RGB.r, RGB.g, RGB.b };
-	CreateWater(&twp->pos, &scl, 0.5f);
+	CreateWater(&twp->pos, &scl, 0.3f);
 	particleWater.argb = backup;
 }
 
@@ -64,23 +77,31 @@ void drawSprayPaintHand(taskwk* twp, playerwk* pwp)
 	late_DrawObjectClipMesh(sprayHoldMdl->getmodel(), LATE_LIG, 0.0f);
 	njPopMatrixEx();
 
+
+	//calc spray pos
 	NJS_POINT3 startpos{ 0,0,0 };
 	NJS_POINT3 dest = pwp->righthand_pos;
+	dest.x -= 1.5f;
+	dest.z += 1.5f;
 
 	njPushMatrix(nj_unit_matrix_);
 	njRotateZ(0, twp->ang.z);
 	njRotateX(0, twp->ang.x);
 	njRotateY(0, (0x8000 - twp->ang.y));
+
 	njCalcVector(_nj_current_matrix_ptr_, &dest, &startpos);
 	njPopMatrix(1u);
+
 	njAddVector(&startpos, &twp->cwp->info->center);
 
 	auto task = CreateElementalTask(LoadObj_Data1, 6, SprayExec);
 
 	if (task)
 	{
+		task->dest = SprayDel;
 		task->twp->pos = startpos;
 		task->twp->scl = curTagPos[pnum];
+		task->twp->counter.b[0] = pnum;
 	}
 
 	___dsSetPalette(0);

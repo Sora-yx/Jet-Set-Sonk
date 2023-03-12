@@ -107,7 +107,7 @@ static void SonkExec_r(task* tp)
 	auto twp = tp->twp;
 	auto pwp = (playerwk*)tp->mwp->work.l;
 
-	if ( (twp->flag & Status_Ground) && twp->mode <= 2)
+	if ( (twp->flag & Status_Ground) && twp->mode <= 2 && !pwp->ttp)
 		out_TagCheckInput(twp, pwp);
 }
 
