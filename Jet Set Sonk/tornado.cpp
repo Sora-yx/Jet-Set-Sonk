@@ -36,7 +36,7 @@ objNode AllTornadoSonk[]
 
 static void TornadoCallBack(NJS_OBJECT* obj)
 {
-	for (uint16_t i = 0; i < LengthOfArray(AllTornadoSonk); i++) //we browse the array of all the tornado objs with Sonic/Tails nodes
+	for (uint8_t i = 0; i < LengthOfArray(AllTornadoSonk); i++) //we browse the array of all the tornado objs with Sonic/Tails nodes
 	{
 		const uint8_t node = AllTornadoSonk[i].node;
 
