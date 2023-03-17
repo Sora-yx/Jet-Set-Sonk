@@ -18,11 +18,18 @@ void PlayFailJingle()
 	PlayJingle(jingleID[0]);
 }
 
-void PlayClearJingle()
+
+task* LoadMusicResult(LoadObj flags, int index, void(__cdecl* loadSub)(task*))
 {
-	ADXTaskInit();
-	PlayJingle(jingleID[1]);
+	if (isTagLevel() && CurrentCharacter == Characters_Sonic)
+	{
+		Load_DelayedSound_BGM(jingleID[1]);
+		return nullptr;
+	}
+
+	return CreateElementalTask(flags, index, loadSub);
 }
+
 
 void init_jingle(HelperFunctions help)
 {
@@ -30,4 +37,7 @@ void init_jingle(HelperFunctions help)
 	{
 		jingleID[i] = help.RegisterMusicFile(newJingle[i]);	
 	}
+
+
+	WriteCall((void*)0x41436F, LoadMusicResult);
 }
