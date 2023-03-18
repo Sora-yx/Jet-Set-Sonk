@@ -432,7 +432,7 @@ signed int out_TagCheckInput(taskwk* Ptwp, playerwk* pwp)
 {
 	auto pnum = Ptwp->counter.b[0];
 
-	if (Controllers[pnum].PressedButtons & Buttons_Y && !isTagging && !isTagLevel())
+	if (Controllers[pnum].PressedButtons & Buttons_Y && !isTagging && !isTagLevel() && !IsChaoGarden)
 	{
 		Ptwp->mode = 195;
 		task* tp = CreateElementalTask(2, 2, outTag_Exec);

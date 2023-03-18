@@ -10,7 +10,7 @@ int16_t saveTimerHM = 300;
 
 void ReadInfo(const char* path, const HelperFunctions& helperFunction)
 {
-	const std::string iniPath = "SYSTEM\\info.ini";
+	const std::string iniPath = "SYSTEM\\tagInfo.ini";
 	const auto originFilePath = HelperFunctionsGlobal.GetReplaceablePath(iniPath.c_str()); //used to make other mods able to replace the strings
 
 	const std::string failed = modName + ": Failed to load mod info...\n";

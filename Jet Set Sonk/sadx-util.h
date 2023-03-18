@@ -41,3 +41,6 @@ DataPointer(NJS_OBJECT, Tornado2TakeOff_EventObj, 0x2C08F40);
 DataPointer(task*, TR2TakeOffEVPtr, 0x3C842B8);
 DataPointer(task*, TR2TailsRM, 0x3C84274);
 DataPointer(task*, TR2SonkRM, 0x3C84530);
+DataPointer(task*, TRB2, 0x3C841C4);
+FunctionPointer(void, sub_6007E0, (int a1), 0x6007E0);
+
