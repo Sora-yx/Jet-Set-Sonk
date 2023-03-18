@@ -70,6 +70,12 @@ void CreateJVList(NJS_OBJECT* arr[], IniFile* ini, std::vector<PL_JOIN_VERTEX>& 
 	delete ini;
 }
 
+static void __cdecl InitNPCSonicWeldInfo_r()
+{
+	memcpy(NPCSonicWeldInfo, so_jvlist.data(), sizeof(WeldInfo) * 15);
+	NPCSonicWeldInfo[15] = {};
+}
+
 void SonicJVList()
 {
 	file_so_jvlist = new IniFile(std::string(modpath) + "\\system\\welds\\so_jvlist.ini");
@@ -81,8 +87,14 @@ void SonicJVList()
 		WriteData((PL_JOIN_VERTEX**)0x49ABAC, so_jvlist.data());
 		WriteData((PL_JOIN_VERTEX**)0x49AC3C, so_jvlist.data());
 		WriteData((PL_JOIN_VERTEX**)0x49ACB6, so_jvlist.data());
+
+
+		WriteJump(InitNPCSonicWeldInfo, InitNPCSonicWeldInfo_r);
+
+		return;
+		//npc welds
 		WriteData((PL_JOIN_VERTEX**)0x7D27BA, so_jvlist.data());
-		WriteData((PL_JOIN_VERTEX**)0x7D30A0, so_jvlist.data());
+		//WriteData((PL_JOIN_VERTEX**)0x7D30A0, so_jvlist.data());
 		WriteData((PL_JOIN_VERTEX**)0x7D58B1, so_jvlist.data());
 		WriteData((PL_JOIN_VERTEX**)0x7D5D21, so_jvlist.data());
 	}

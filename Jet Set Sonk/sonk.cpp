@@ -23,6 +23,10 @@ enum
 
 TaskHook SonicExec_t(SonicTheHedgehog);
 TaskHook SonicDisplay_t(SonicDisplay);
+TaskHook DrawNPCMainCharSS_t(0x62F1B0);
+TaskHook DrawNPCMainCharMR_t(0x52EAA0);
+TaskHook DrawNPCMainCharEC0_t(0x51AA60);
+
 
 void (*backupCallback)(NJS_OBJECT* obj) = NULL;
 
@@ -80,6 +84,46 @@ void DrawHeadItems()
 	___dsSetPalette(0);
 }
 
+
+static void DrawNPCHeadItems_FuncHook(FunctionHook<void, task*> &t, task* tp)
+{
+	auto twp = tp->twp;
+	const bool isSonk = tp->twp->wtimer == 0 || tp->twp->wtimer == 7 && CurrentLevel == LevelIDs_StationSquare;
+
+	if (isSonk)
+	{
+		backupCallback = *NodeCallbackFuncPtr; //save current nodecallback for mods compatibility
+		*NodeCallbackFuncPtr = SonkCallBack;
+	}
+
+	t.Original(tp); //call original function
+	
+
+	if (isSonk)
+	{
+		if (dsCheckViewV(&twp->pos, 15.0f) && !loop_count && !EV_MainThread_ptr)
+			DrawHeadItems();
+
+		*NodeCallbackFuncPtr = *backupCallback; //restore
+	}
+}
+
+static void DrawNPCMainCharMR_r(task* tp)
+{
+	DrawNPCHeadItems_FuncHook(DrawNPCMainCharMR_t, tp);
+}
+
+static void DrawNPCMainCharSS_r(task* tp)
+{
+	DrawNPCHeadItems_FuncHook(DrawNPCMainCharSS_t, tp);
+}
+
+static void DrawNPCMainCharEC0_r(task* tp)
+{
+	DrawNPCHeadItems_FuncHook(DrawNPCMainCharEC0_t, tp);
+}
+
+
 static void SonkDisplay_r(task* tp)
 {
 	auto pwp = reinterpret_cast<playerwk*>(tp->mwp->work.ptr);
@@ -91,7 +135,7 @@ static void SonkDisplay_r(task* tp)
 
 	if (!MetalSonicFlag && (twp->flag & Status_Ball) == 0 && (twp->wtimer & 2) == 0 && dsCheckViewV(&twp->pos, 15.0f))
 	{
-		DrawHeadItems();
+		DrawHeadItems();	
 		DrawSkatingEffects(pwp);
 		drawSprayPaintHand(twp, pwp);
 	}
@@ -110,6 +154,7 @@ static void SonkExec_r(task* tp)
 		out_TagCheckInput(twp, pwp);
 }
 
+
 void initHeadObjects()
 {
 	if (isAccessoryMod)
@@ -125,4 +170,11 @@ void init_Sonk()
 	SonicDisplay_t.Hook(SonkDisplay_r);
 	HelperFunctionsGlobal.RegisterCharacterPVM(Characters_Sonic, graphPVM);
 	initHeadObjects();
+
+	if (!isAccessoryMod)
+	{
+		DrawNPCMainCharSS_t.Hook(DrawNPCMainCharSS_r);
+		DrawNPCMainCharMR_t.Hook(DrawNPCMainCharMR_r);
+		DrawNPCMainCharEC0_t.Hook(DrawNPCMainCharEC0_r);
+	}
 }
