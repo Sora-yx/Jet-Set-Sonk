@@ -5,6 +5,8 @@ TaskHook TornadoEventDisp_t(0x6F8800);
 TaskHook TornadoDisp_t((intptr_t)Tornado_Display);
 TaskHook Tornado2TransfoDisp_t((intptr_t)0x62AB90);
 TaskHook Tornado2EventDisp_t(0x4188D0);
+TaskHook TornadoExec_t((intptr_t)Tornado_Main);
+TaskHook TornadoShotDisp_t(0x62A9A0);
 
 static void (*backupCallBack)(NJS_OBJECT* obj) = NULL;
 
@@ -91,14 +93,30 @@ void TornadoEventDisp_r(task* tp)
 	*NodeCallbackFuncPtr = TornadoCallBack;
 
 	TornadoEventDisp_t.Original(tp);
-	DrawHeadItems();
+
+	auto twp = tp->twp;
+
+	if (twp && dsCheckViewV(&twp->pos, 150.0f))
+		DrawHeadItems();
 
 	*NodeCallbackFuncPtr = backupCallBack;
 }
 
+bool isTornadoEventObj(task* tornadoObj, task* tp)
+{
+	if (tornadoObj && tornadoObj == tp)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void Tornado2EventDisp_r(task* tp)
 {
-	bool isTR2 = (TR2TakeOffEVPtr && TR2TakeOffEVPtr == tp || TR2TailsRM && TR2TailsRM == tp || TR2SonkRM && TR2SonkRM == tp);
+	const bool isTR2 = (isTornadoEventObj(TR2TakeOffEVPtr, tp) || isTornadoEventObj(TR2TailsRM, tp) || isTornadoEventObj(TR2SonkRM, tp)
+		|| isTornadoEventObj(TRB2, tp));
+
 
 	if (isTR2)
 	{
@@ -110,9 +128,47 @@ void Tornado2EventDisp_r(task* tp)
 
 	if (isTR2)
 	{
-		DrawHeadItems();
+		auto twp = tp->twp;
+
+		if (twp && dsCheckViewV(&twp->pos, 200.0f))
+			DrawHeadItems();
+
 		*NodeCallbackFuncPtr = backupCallBack;
 	}
+}
+
+void TornadoShotDisp_r(task* tp)
+{
+	backupCallBack = *NodeCallbackFuncPtr; //save current nodecallback for mods compatibility
+	*NodeCallbackFuncPtr = TornadoCallBack;
+
+	TornadoShotDisp_t.Original(tp);
+
+	auto twp = tp->twp;
+
+	if (twp && dsCheckViewV(&twp->pos, 200.0f))
+		DrawHeadItems();
+
+	*NodeCallbackFuncPtr = backupCallBack;
+}
+
+void TornadoExec_r(task* tp)
+{
+	auto twp = tp->twp;
+
+	if (tp->twp->mode == 0)
+	{
+		LoadPVM("SONIC", &SONIC_TEXLIST);
+	}
+
+	TornadoExec_t.Original(tp); //run original Tornado code
+}
+
+
+void sub_6007E0_r(int a1)
+{
+	LoadPVM("SONIC", &SONIC_TEXLIST);
+	return sub_6007E0(a1);
 }
 
 void InitTornado()
@@ -124,5 +180,9 @@ void InitTornado()
 
 		Tornado2TransfoDisp_t.Hook(Tornado2TransfoDisp_r);
 		Tornado2EventDisp_t.Hook(Tornado2EventDisp_r);
+		TornadoExec_t.Hook(TornadoExec_r);
+		TornadoShotDisp_t.Hook(TornadoShotDisp_r);
+
+		WriteCall((void*)0x6B9344, sub_6007E0_r); //load Sonic textures for Tails RM Cutscene so it doesn't crash
 	}
 }
