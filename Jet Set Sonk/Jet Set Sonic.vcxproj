@@ -158,6 +158,7 @@
     <ClInclude Include="Mod.h" />
     <ClInclude Include="objects.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="SSTexlist.h" />
     <ClInclude Include="tags.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>

@@ -1,10 +1,12 @@
 #include "pch.h"
+#include "SSTexlist.h"
 
 ModelInfo* rootMdl = nullptr;
 ModelInfo* morphHead = nullptr;
 ModelInfo* jumpBall = nullptr;
 ModelInfo* curled = nullptr;
 ModelInfo* eventHead = nullptr;
+ModelInfo* SSRoot = nullptr;
 
 //upgrades
 ModelInfo* crystalRing = nullptr;
@@ -49,14 +51,25 @@ void replaceSonkActions()
 	{
 		SONIC_ACTIONS[i]->object = root;
 	}
-	//Super Sonic go here
+
+
+	for (i = 130; i < 134; i++)
+	{
+		SONIC_ACTIONS[i]->object = SSRoot->getmodel();
+	}
 
 	for (i = 134; i < 138; i++)
 	{
 		SONIC_ACTIONS[i]->object = root;
 	}
 
-	//Super Sonic go here
+	for (i = 138; i < 145; i++)
+	{
+		if (i == 142)
+			continue;
+
+		SONIC_ACTIONS[i]->object = SSRoot->getmodel();
+	}
 
 	for (i = 145; i < 149; i++)
 	{
@@ -78,6 +91,8 @@ void replaceSonkModels()
 void replaceSonkObjects()
 {
 	auto root = rootMdl->getmodel();
+	auto ssRoot = SSRoot->getmodel();
+
 	SONIC_OBJECTS[0] = root;
 
 	//right arm
@@ -109,6 +124,39 @@ void replaceSonkObjects()
 	SONIC_OBJECTS[19] = root->getnode(61);
 	SONIC_OBJECTS[20] = root->getnode(62);
 	SONIC_OBJECTS[21] = root->getnode(63);
+
+	//Super Sonic
+	SONIC_OBJECTS[22] = ssRoot;
+
+	//right arm SS
+	SONIC_OBJECTS[23] = ssRoot->getnode(34);
+	SONIC_OBJECTS[24] = ssRoot->getnode(33);
+	SONIC_OBJECTS[25] = ssRoot->getnode(29);
+	SONIC_OBJECTS[26] = ssRoot->getnode(30);
+	SONIC_OBJECTS[27] = ssRoot->getnode(32);
+
+	//left arm SS
+	SONIC_OBJECTS[28] = ssRoot->getnode(45);
+	SONIC_OBJECTS[29] = ssRoot->getnode(44);
+	SONIC_OBJECTS[30] = ssRoot->getnode(40);
+	SONIC_OBJECTS[31] = ssRoot->getnode(41);
+	SONIC_OBJECTS[32] = ssRoot->getnode(43);
+
+	//right leg SS
+	SONIC_OBJECTS[33] = ssRoot->getnode(55);
+	SONIC_OBJECTS[34] = ssRoot->getnode(54);
+	SONIC_OBJECTS[35] = ssRoot->getnode(51);
+	SONIC_OBJECTS[36] = ssRoot->getnode(52);
+	SONIC_OBJECTS[37] = ssRoot->getnode(53);
+
+	//left leg SS
+	SONIC_OBJECTS[38] = ssRoot->getnode(65);
+	SONIC_OBJECTS[39] = ssRoot->getnode(64);
+	SONIC_OBJECTS[40] = ssRoot->getnode(61);
+	SONIC_OBJECTS[41] = ssRoot->getnode(62);
+	SONIC_OBJECTS[42] = ssRoot->getnode(63);
+
+	//43 is empty
 
 	SONIC_OBJECTS[44] = jumpBall->getmodel();
 
@@ -152,6 +200,7 @@ void init_chrModel()
 	jumpBall = LoadBasicModel("jumpBall");
 	eventHead = LoadBasicModel("eventHead");
 	curled = LoadBasicModel("curled");
+	SSRoot = LoadBasicModel("SSRoot");
 
 	crystalRing = LoadBasicModel("crystalRing");
 	wristCrystalRing = LoadBasicModel("wristCrystalRing");
@@ -169,4 +218,16 @@ void init_chrModel()
 
 	WriteData<1>((int*)0x493500, 0xC3); //disable morph feet
 	WriteJump((void*)0x49BE2D, (void*)0x49BE68); //disable light shoes
+
+	WriteData((NJS_TEXLIST**)0x55E65C, SSAura01);
+	WriteData((NJS_TEXLIST**)0x55E751, SSAura01);
+	WriteData((NJS_TEXLIST**)0x55E712, SSAura02);
+	WriteData((NJS_TEXLIST**)0x55E7CD, SSWaterThing);
+	WriteData((NJS_TEXLIST**)0x55F2B3, SSHomingTex1);
+	WriteData((NJS_TEXLIST**)0x55F1D1, SSHomingTex1);
+	WriteData((NJS_TEXLIST**)0x55F1DC, SSHomingTex2);
+	WriteData((NJS_TEXLIST**)0x55F2BE, SSHomingTex2);
+	WriteData((NJS_TEXLIST**)0x55F677, SSHomingTex2);
+	WriteData((NJS_TEXLIST**)0x55F669, SSHomingTex3);
+	SUPERSONIC_TEXLIST = SS_PVM;
 }

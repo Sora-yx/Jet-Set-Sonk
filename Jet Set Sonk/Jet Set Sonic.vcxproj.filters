@@ -57,6 +57,9 @@
     <ClInclude Include="backring.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SSTexlist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

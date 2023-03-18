@@ -376,8 +376,6 @@ void OutTag_Disp(task* tp)
 	njRotateY(0, -(ang.y));
 	dsDrawObject(tagMdls[id]->getmodel());
 	njPopMatrix(1u);
-
-
 }
 
 void outTag_Exec(task* tp)
@@ -387,7 +385,6 @@ void outTag_Exec(task* tp)
 	const uint8_t id = 0;
 	auto pnum = twp->counter.b[0];
 	const uint8_t hpMAX = sprayNeeded[id];
-	const NJS_MODEL_SADX* mdl = (NJS_MODEL_SADX*)tagMdls[id]->getmodel()->model;
 
 	switch (twp->mode)
 	{
@@ -434,13 +431,12 @@ signed int out_TagCheckInput(taskwk* Ptwp, playerwk* pwp)
 
 	if (Controllers[pnum].PressedButtons & Buttons_Y && !isTagging && !isTagLevel() && !IsChaoGarden)
 	{
-		Ptwp->mode = 195;
 		task* tp = CreateElementalTask(2, 2, outTag_Exec);
 
 		if (tp)
 		{
+			Ptwp->mode = 195;
 			auto twp = tp->twp;
-
 			twp->counter.b[0] = pnum;
 
 			twp->pos = { Ptwp->pos.x + 10.0f, pwp->shadow.y_bottom + 0.3f, Ptwp->pos.z + 10.0f };

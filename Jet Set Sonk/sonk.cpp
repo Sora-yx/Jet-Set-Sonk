@@ -97,7 +97,6 @@ static void DrawNPCHeadItems_FuncHook(FunctionHook<void, task*> &t, task* tp)
 	}
 
 	t.Original(tp); //call original function
-	
 
 	if (isSonk)
 	{
