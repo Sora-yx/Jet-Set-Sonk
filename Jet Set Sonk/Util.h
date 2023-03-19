@@ -33,3 +33,4 @@ void ResetScaleUI();
 Float randomFloat();
 bool isTailsAI(uint8_t pnum);
 bool isTagLevel();
+void FadeoutScreen(task* obj);

@@ -1,4 +1,5 @@
 #pragma once
 
 void BackRing(task* tp);
-void backRingRestoreData();
+void init_BackRing();
+extern bool useBackRing;

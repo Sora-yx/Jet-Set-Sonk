@@ -169,4 +169,5 @@ void initSH_Objects()
 	initSprayMdl();
 	initGraffitiMdl();
 	initSH_ObjList();
+	init_BackRing();
 }

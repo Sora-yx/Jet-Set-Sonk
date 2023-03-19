@@ -256,7 +256,7 @@ Float randomFloat()
 
 bool isTailsAI(uint8_t pnum)
 {
-	if (playertp[pnum] && playertwp[pnum]->counter.b[1] == Characters_Tails && TailsAI_ptr && TailsAI_ptr->Data1->CharIndex == pnum)
+	if (pnum && playertp[pnum] && playertwp[pnum]->counter.b[1] == Characters_Tails && TailsAI_ptr)
 	{
 		return true;
 	}
@@ -267,4 +267,39 @@ bool isTailsAI(uint8_t pnum)
 bool isTagLevel()
 {
 	return CurrentLevel == LevelIDs_SpeedHighway;
+}
+
+void FadeoutScreen(task* obj)
+{
+	auto twp = obj->twp;
+
+	if (++twp->wtimer > 120)
+	{
+		int color = 0x00000000;
+		ScreenFade_Color = *(NJS_COLOR*)&color;
+		FreeTask(obj);
+	}
+	else
+	{
+		int color = 0x0000000;
+		ScreenFade_Color = *(NJS_COLOR*)&color;
+
+		if (twp->wtimer < 180)
+		{
+			if (twp->wtimer < 60) {
+				twp->counter.b[1] += 4;
+
+				ScreenFade_Color.argb.a = twp->counter.b[1];
+			}
+			else {
+				ScreenFade_Color.argb.a = 0x0;
+			}
+		}
+		else {
+			twp->counter.b[1] -= 20;
+			ScreenFade_Color.argb.a = twp->counter.b[1];
+		}
+
+		ScreenFade_DrawColor();
+	}
 }

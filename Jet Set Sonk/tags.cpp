@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "objects.h"
 #include "tags.h"
+#include "backring.h"
 
 static NJS_TEXNAME graffitiTex[11]{ 0 };
 NJS_TEXLIST graffitiTexlist = { arrayptrandlength(graffitiTex) };
@@ -93,10 +94,7 @@ void SetTagDone(taskwk* twp)
 
 void setNumberOfTagToDo()
 {
-	if (tagsLeft[CurrentAct] > 0)
-		return;
-
-	if (!CurrentObjectList || !CurrentSetFile)
+	if (tagsLeft[CurrentAct] > 0 || !CurrentObjectList || !CurrentSetFile)
 		return;
 
 	int listSize = CurrentObjectList->Count;
@@ -287,6 +285,9 @@ void tag_Exec(task* tp)
 	switch (twp->mode)
 	{
 	case init:
+		if (!tagsLeft[CurrentAct])
+			return;
+
 		SetFlagNoRespawn(tp);
 		resetTagDataValues(twp);
 		twp->counter.b[texID] = mdl->mats[0].attr_texId; //save tag tex id
@@ -294,7 +295,11 @@ void tag_Exec(task* tp)
 
 		if (!SetCPFlag(tp))
 		{
-			twp->mode = createChild;
+			if (twp->scl.z < 2.0f)
+				twp->mode = createChild;
+			else
+				twp->mode = checkInput; //arrow is handled directly in the set file
+
 		}
 		else
 		{
@@ -390,6 +395,7 @@ void outTag_Exec(task* tp)
 	{
 	case 0:
 		tp->disp = OutTag_Disp;
+		twp->pos.y += 1.0f;
 		curTagPos[pnum] = twp->pos;
 		twp->mode++;
 		break;

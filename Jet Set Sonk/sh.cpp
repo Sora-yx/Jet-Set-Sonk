@@ -13,6 +13,8 @@ static char actVisited = 0;
 extern int16_t timerHM;
 extern int16_t saveTimerHM;
 
+static FunctionHook<void, int> RunLevelDestructor_t(RunLevelDestructor);
+
 StartPosition SH1Pos = { LevelIDs_SpeedHighway, 1, {-220, 42, 0}, 0 };
 
 enum
@@ -117,12 +119,6 @@ static void Messages(task* tp)
 	}
 }
 
-
-void MissionClear(task* tp)
-{
-
-}
-
 void Sh_Delete_r(task* tp)
 {
 	//tagsLeft[CurrentAct] = 0;
@@ -143,6 +139,7 @@ void Sh_Disp_r(task* tp)
 	DrawHud();
 }
 
+static int backringTimer = 0;
 void Sh_Exec_r(task* tp)
 {
 	auto twp = tp->twp;
@@ -157,6 +154,30 @@ void Sh_Exec_r(task* tp)
 
 	}
 
+	if (useBackRing)
+	{
+		++backringTimer;
+
+		if (backringTimer >= 0 && backringTimer <= 60)
+			camera_twp->pos = playertwp[0]->pos;
+
+		if (backringTimer >= 100)
+		{
+			EnableControl();
+
+			for (uint8_t i = 0; i < pMax; i++)
+			{
+				if (playertwp[i])
+				{
+					CharColliOn(playertwp[i]);
+				}
+			}
+	
+			backringTimer = 0;
+			useBackRing = false;
+		}
+	}
+
 	char count = 0;
 
 	LoopTaskC(tp);
@@ -169,6 +190,7 @@ void Sh_Exec_r(task* tp)
 
 		if (TimeThing)
 		{
+
 			if (CurrentAct == twp->mode)
 			{
 				if (++twp->wtimer == 20)
@@ -238,12 +260,31 @@ void Rd_Highway_r(task* tp)
 				CreateElementalTask(3, 2, Messages);
 			}
 
-			backRingRestoreData();
 			break;
 		}
 	}
 
 	tp->exec = (TaskFuncPtr)Obj_SpeedHighway;
+}
+
+void SH_ResetAllData()
+{
+	backringTimer = 0;
+	useBackRing = false;
+	resetSprayCount();
+	memset(tagsLeft, 0, sizeof(uint8_t) * actMax);
+	tagCount = 0;
+	actVisited = 0;
+}
+
+void __cdecl RunLevelDestructor_r(int heap)
+{
+	if (heap == 0)
+	{
+		SH_ResetAllData();
+	}
+
+	RunLevelDestructor_t.Original(heap);
 }
 
 void init_SH()
@@ -253,4 +294,5 @@ void init_SH()
 
 	RoundMasterList[LevelIDs_SpeedHighway] = Rd_Highway_r;
 	HelperFunctionsGlobal.RegisterStartPosition(Characters_Sonic, SH1Pos);
+	RunLevelDestructor_t.Hook(RunLevelDestructor_r);
 }

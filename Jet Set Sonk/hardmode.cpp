@@ -96,7 +96,6 @@ void TimeOverDisp(task* tp)
 
 void ResetLevel()
 {
-	DeleteLandAndObj();
 	Set0Rings();
 	PauseEnabled = 0;
 	ResetTime();

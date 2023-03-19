@@ -1,73 +1,45 @@
 #include "pch.h"
 #include "tags.h"
+#include "UsercallFunctionHandler.h"
 
 extern NJS_OBJECT object_GoalRing;
 extern NJS_TEXLIST GoalRingTextures;
 
-void ResetLevel();
-bool isBackRing = false;
-char timeMin = 0;
-char timeSec = 0;
-char timeFrame = 0;
-uint8_t sprayBackup[pMax]{ 0 };
-uint16_t ringBackup = 0;
-uint8_t backupTagCount = 0;
-int backupScore = 0;
-int backupTimerHM = 0;
-int backupSaveTimerHM = 0;
+UsercallFuncVoid(SHACT2_Trigger_t, (task* a1), (a1), 0x610050, rEAX);
+TaskHook SHACT3_Trigger_t(0x610300);
 
-extern int16_t timerHM;
-extern int16_t saveTimerHM;
-
-
-void backRingSaveData()
+int getPlayerStartRot()
 {
-	timeMin = TimeMinutes;
-	timeSec = TimeSeconds;
-	timeFrame = TimeFrames;
-	ringBackup = Rings;
-	isTagging = false;
-	backupTagCount = tagCount;
-	backupScore = Score;
-	backupTimerHM = timerHM;
-	backupSaveTimerHM = backupSaveTimerHM;
-
-
-	for (uint8_t i = 0; i < pMax; i++)
+	for (uint16_t i = 0; i < SonicStartArray.size(); i++)
 	{
-		sprayBackup[i] = sprayPaintCount[pMax];
+		if (SonicStartArray[i].LevelID == CurrentLevel && SonicStartArray[i].ActID == CurrentAct)
+		{
+			return SonicStartArray[i].YRot;
+		}
 	}
 
-	isBackRing = true;
+	return 0x0;
 }
 
-void backRingRestoreData()
+NJS_POINT3 getPlayerStartPos()
 {
-	if (!isBackRing)
-		return;
-
-	TimeMinutes = timeMin;
-	TimeSeconds = timeSec;
-	TimeFrames = timeFrame;
-	Rings = ringBackup;
-	isTagging = false;
-	tagCount = backupTagCount;
-
-	for (uint8_t i = 0; i < pMax; i++)
+	for (uint16_t i = 0; i < SonicStartArray.size(); i++)
 	{
-		sprayPaintCount[pMax] = sprayBackup[i];
+		if (SonicStartArray[i].LevelID == CurrentLevel && SonicStartArray[i].ActID == CurrentAct)
+		{
+			return SonicStartArray[i].Position;
+		}
 	}
 
-	timerHM = backupTimerHM;
-	saveTimerHM = backupSaveTimerHM;
-	isBackRing = false;
+	return { -1, -1, -1 };
 }
 
 void BackRingDisp(task* tp)
 {
 	auto twp = tp->twp;
 
-	if (!MissedFrames) {
+	if (!MissedFrames)
+	{
 		njSetTexture(&GoalRingTextures);
 		njPushMatrix(0);
 		njTranslateV(0, &twp->pos);
@@ -77,13 +49,19 @@ void BackRingDisp(task* tp)
 	}
 }
 
-
+bool useBackRing = false;
 void BackRing(task* tp)
 {
 	if (CheckRangeOut(tp))
 		return;
 
 	auto twp = tp->twp;
+
+	if (tagsLeft[CurrentAct] <= 0)
+	{
+		twp->mode = 3;
+	}
+
 
 	switch (twp->mode)
 	{
@@ -102,22 +80,69 @@ void BackRing(task* tp)
 			{
 				if (playertwp[i])
 				{
-					playertwp[i]->smode = 20;
-					playertwp[i]->flag |= Status_DoNextAction;
+					DisableControl();
+					CharColliOff(playertwp[i]);
+					PClearSpeed(playermwp[i], playerpwp[i]);
 				}
 			}
 
-			backRingSaveData();
+			useBackRing = true;
+			CreateElementalTask(LoadObj_Data1, 1, FadeoutScreen);
+			//backRingSaveData();
 			twp->mode++;
 		}
 		break;
 	case 2:
-		ResetLevel();
-		FreeTask(tp);
-		return;
+		twp->ang.y += 300;
+
+		if (++twp->wtimer == 30)
+		{
+			for (uint8_t i = 0; i < pMax; i++)
+			{
+				if (playertwp[i])
+				{
+					playertwp[i]->pos = getPlayerStartPos();
+					playertwp[i]->ang.y = getPlayerStartRot();
+
+				}
+			}
+			twp->mode++;
+		}
+		break;
 	}
 
-
-	if (tp->disp)
+	if (tp->disp && twp->mode < 3)
 		tp->disp(tp);
+}
+
+void SHACT2_Trigger_r(task* tp)
+{
+	if (isTagLevel() && CurrentCharacter == Characters_Sonic)
+	{
+		if (tagsLeft[CurrentAct] > 0)
+		{
+			return;
+		}
+	}
+
+	SHACT2_Trigger_t.Original(tp);
+}
+
+void SHACT3_Trigger_r(task* tp)
+{
+	if (isTagLevel() && CurrentCharacter == Characters_Sonic)
+	{
+		if (tagsLeft[CurrentAct] > 0)
+		{
+			return;
+		}
+	}
+
+	SHACT3_Trigger_t.Original(tp);
+}
+
+void init_BackRing()
+{
+	SHACT2_Trigger_t.Hook(SHACT2_Trigger_r);
+	SHACT3_Trigger_t.Hook(SHACT3_Trigger_r);
 }
