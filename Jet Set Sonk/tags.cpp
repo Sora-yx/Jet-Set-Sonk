@@ -146,6 +146,7 @@ void ChildArrow(task* tp)
 	case 0:
 		tp->disp = ChildArrowDisp;
 		twp->pos.y += 9.0f;
+		twp->pos.z += 5.0f;
 		twp->value.f = twp->pos.y;
 		twp->mode++;
 		break;
@@ -227,13 +228,16 @@ void DoGraffiti(uint8_t pnum, task* tp)
 void CheckGraffitiInput(task* tp, NJS_POINT3 pos)
 {
 	int pnum = CheckCollisionP(&pos, 35.0f) - 1;
-	if (pnum >= 0)
+	if (pnum >= 0 && playertwp[pnum])
 	{
 		if (Controllers[pnum].PressedButtons & Buttons_Y)
 		{
-			playertwp[pnum]->flag |= Status_DoNextAction;
-			playertwp[pnum]->smode = 12;
-			DoGraffiti(pnum, tp);
+			if (playertwp[pnum]->counter.b[1] == Characters_Sonic)
+			{
+				playertwp[pnum]->flag |= Status_DoNextAction;
+				playertwp[pnum]->smode = 12;
+				DoGraffiti(pnum, tp);
+			}
 		}
 	}
 }
@@ -285,9 +289,6 @@ void tag_Exec(task* tp)
 	switch (twp->mode)
 	{
 	case init:
-		if (!tagsLeft[CurrentAct])
-			return;
-
 		SetFlagNoRespawn(tp);
 		resetTagDataValues(twp);
 		twp->counter.b[texID] = mdl->mats[0].attr_texId; //save tag tex id
@@ -295,11 +296,7 @@ void tag_Exec(task* tp)
 
 		if (!SetCPFlag(tp))
 		{
-			if (twp->scl.z < 2.0f)
-				twp->mode = createChild;
-			else
-				twp->mode = checkInput; //arrow is handled directly in the set file
-
+			twp->mode = createChild;
 		}
 		else
 		{

@@ -4,6 +4,8 @@
 #include "jingle.h"
 #include "backring.h"
 
+#define replaceSET(a, b) HelperFunctionsGlobal.ReplaceFile("system\\" a ".bin", "system\\" b ".bin")
+
 extern std::vector<std::string>Subtitles;
 extern std::vector<uint16_t>TimerSubtitles;
 extern uint8_t actCount;
@@ -295,4 +297,23 @@ void init_SH()
 	RoundMasterList[LevelIDs_SpeedHighway] = Rd_Highway_r;
 	HelperFunctionsGlobal.RegisterStartPosition(Characters_Sonic, SH1Pos);
 	RunLevelDestructor_t.Hook(RunLevelDestructor_r);
+
+	if (hardMode)
+	{
+		replaceSET("SET0400S", "SET0400S_HM");
+		replaceSET("SET0401S", "SET0401S_HM");
+		replaceSET("SET0402S", "SET0402S_HM");
+		replaceSET("SET0400S_DC", "SET0400S_HM");
+		replaceSET("SET0401S_DC", "SET0401S_HM");
+		replaceSET("SET0402S_DC", "SET0402S_HM");
+	}
+	else
+	{
+		replaceSET("SET0400S", "SET0400S_NM");
+		replaceSET("SET0401S", "SET0401S_NM");
+		replaceSET("SET0402S", "SET0402S_NM");
+		replaceSET("SET0400S_DC", "SET0400S_NM");
+		replaceSET("SET0401S_DC", "SET0401S_NM");
+		replaceSET("SET0402S_DC", "SET0402S_NM");
+	}
 }
