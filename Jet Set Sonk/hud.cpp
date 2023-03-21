@@ -37,7 +37,7 @@ static NJS_SPRITE tagSprite = { { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &tagHudTexl
 extern int16_t timerHM;
 void DrawTimerHud()
 {
-	if (!hardMode || timerHM <= 0 || !TimeThing)
+	if (!hardMode || !TimeThing)
 		return;
 
 	tagTimer.p.x = HorizontalStretch * 640.0f / 1.3f;
@@ -48,7 +48,14 @@ void DrawTimerHud()
 	else
 		SetMaterial(1.0f, 1.0f, 0.505, 0.023);
 
+	if (!timerHM)
+	{
+		late_DrawSprite2D(&tagTimer, timerHM, 22046.496f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
+		return;
+	}
+
 	int firstDigit = timerHM;
+
 
 	if (timerHM > 99)
 	{

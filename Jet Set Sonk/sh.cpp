@@ -230,7 +230,9 @@ void Sh_Exec_r(task* tp)
 		tp->disp(tp);
 }
 
+
 void TimeOver(task* tp);
+task* TimeOverPtr = nullptr;
 
 void Rd_Highway_r(task* tp)
 {
@@ -245,8 +247,8 @@ void Rd_Highway_r(task* tp)
 				exec->disp = Sh_Disp_r;
 				exec->dest = Sh_Delete_r;
 
-				if (hardMode)
-					CreateChildTask(2, TimeOver, exec);
+				if (hardMode && !TimeOverPtr)
+					TimeOverPtr = CreateChildTask(2, TimeOver, exec);
 			}
 
 			if (!Subtitles.empty() && !cop)
