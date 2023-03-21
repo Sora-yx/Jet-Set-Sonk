@@ -7,6 +7,16 @@ uint8_t copCount = 4;
 NJS_POINT3 goalPos[actMax]{ 0, 0, 0 };
 int16_t timerHM = 300;
 int16_t saveTimerHM = 300;
+Buttons tagBtn = Buttons_Y;
+int16_t saveTimerHMReset = 0;
+
+static const Buttons ButtonsList[]
+{
+	Buttons_Y,
+	Buttons_Z,
+	Buttons_C,
+	Buttons_D,
+};
 
 void ReadInfo(const char* path, const HelperFunctions& helperFunction)
 {
@@ -48,6 +58,7 @@ void ReadInfo(const char* path, const HelperFunctions& helperFunction)
 		timerHM = 100; //don't be silly
 
 	saveTimerHM = timerHM;
+	saveTimerHMReset = timerHM;
 
 	count = 0;
 }
@@ -69,6 +80,7 @@ void ReadUserSettings(const char* path)
 
 	tagLvl = config->getBool("Main", "tagLvl", tagLvl);
 	hardMode = config->getBool("Main", "hardMode", hardMode);
+	tagBtn = ButtonsList[config->getInt("Main", "tagBtn", 0)];
 
 	delete config;
 }

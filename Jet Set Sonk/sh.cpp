@@ -14,6 +14,7 @@ static bool cop = false;
 static char actVisited = 0;
 extern int16_t timerHM;
 extern int16_t saveTimerHM;
+extern int16_t saveTimerHMReset;
 
 static FunctionHook<void, int> RunLevelDestructor_t(RunLevelDestructor);
 
@@ -146,16 +147,6 @@ void Sh_Exec_r(task* tp)
 {
 	auto twp = tp->twp;
 
-	if (tagsLeft[CurrentAct] > 0)
-	{
-		if (!tp->ctp || tp->ctp->twp->mode < 2)
-		{
-			SetDebugFontSize(26);
-			DisplayDebugStringFormatted(NJM_LOCATION(2, 2), "Tags Left: %d", tagsLeft[CurrentAct]);
-		}
-
-	}
-
 	if (useBackRing)
 	{
 		++backringTimer;
@@ -277,6 +268,7 @@ void SH_ResetAllData()
 	memset(tagsLeft, 0, sizeof(uint8_t) * actMax);
 	tagCount = 0;
 	actVisited = 0;
+	timerHM = saveTimerHMReset;
 }
 
 void __cdecl RunLevelDestructor_r(int heap)

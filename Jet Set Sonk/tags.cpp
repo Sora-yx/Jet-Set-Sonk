@@ -230,7 +230,7 @@ void CheckGraffitiInput(task* tp, NJS_POINT3 pos)
 	int pnum = CheckCollisionP(&pos, 35.0f) - 1;
 	if (pnum >= 0 && playertwp[pnum])
 	{
-		if (Controllers[pnum].PressedButtons & Buttons_Y)
+		if (Controllers[pnum].PressedButtons & tagBtn)
 		{
 			if (playertwp[pnum]->counter.b[1] == Characters_Sonic)
 			{
@@ -432,7 +432,7 @@ signed int out_TagCheckInput(taskwk* Ptwp, playerwk* pwp)
 {
 	auto pnum = Ptwp->counter.b[0];
 
-	if (Controllers[pnum].PressedButtons & Buttons_Y && !isTagging && !isTagLevel() && !IsChaoGarden)
+	if (Controllers[pnum].PressedButtons & tagBtn && !isTagging && !isTagLevel() && !IsChaoGarden)
 	{
 		task* tp = CreateElementalTask(2, 2, outTag_Exec);
 

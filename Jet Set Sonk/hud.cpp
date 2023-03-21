@@ -4,7 +4,11 @@
 void LoadLevelObj_r();
 static FunctionHook<void> LoadLevelObj_t(LoadLevelObject, LoadLevelObj_r);
 
-static NJS_TEXANIM tagHudTexAnim = { 40.0f, 48.0f, 32, 32, 0, 0, 0x0FF, 0x0FF, 0, 0x20 };
+static NJS_TEXANIM tagHudTexAnim[] =
+{
+	{ 40.0f, 48.0f, 32, 32, 0, 0, 0x0FF, 0x0FF, 0, 0x20},
+	{ 0x40, 0x40, 0, 0, 0, 0, 0x100, 0x100, 1, 0x20 },
+};
 
 static const Float tX = 40.0f;
 static const Float tY = 40.0f;
@@ -25,10 +29,10 @@ static NJS_TEXANIM tagHudTimer[] =
 
 static NJS_SPRITE tagTimer = { { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &CON_REGULAR_TEXLIST, tagHudTimer };
 
-static NJS_TEXNAME tagHudTex[12];
+static NJS_TEXNAME tagHudTex[2];
 static NJS_TEXLIST tagHudTexlist = { arrayptrandlength(tagHudTex) };
 
-static NJS_SPRITE tagSprite = { { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &tagHudTexlist, &tagHudTexAnim };
+static NJS_SPRITE tagSprite = { { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &tagHudTexlist, tagHudTexAnim };
 
 extern int16_t timerHM;
 void DrawTimerHud()
@@ -66,7 +70,7 @@ void DrawTimerHud()
 void DrawSprayHud()
 {
 	tagSprite.p.x = 46.0f;
-	tagSprite.p.y = VerticalStretch * 480.0f - 64.0f - 32.0f;
+	tagSprite.p.y = VerticalStretch * 480.0f - 64.0f - (isHudPlus ? 32.0f : 36.0f);
 	late_DrawSprite2D(&tagSprite, 0, 22046.498f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
 
 	auto backup = Hud_RingTimeLife.p;
@@ -83,12 +87,37 @@ void DrawSprayHud()
 	Hud_RingTimeLife.p = backup;
 }
 
+void DrawTagLeftHud()
+{
+	if (!TimeThing)
+		return;
+
+	tagSprite.p.x = 16.0f;
+	tagSprite.p.y = 12.0f;
+	late_DrawSprite2D(&tagSprite, 1, 22046.498f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
+
+	auto backup = Hud_RingTimeLife.p;
+	auto count = tagsLeft[CurrentAct];
+
+	Hud_RingTimeLife.p.x = 63.0f;
+	Hud_RingTimeLife.p.y = tagSprite.p.y + 1.0f;
+	Hud_RingTimeLife.sx -= 0.03f;
+	Hud_RingTimeLife.sy -= 0.03f;
+
+	//late_DrawSprite2D(&Hud_RingTimeLife, 10, 22046.496f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
+	late_DrawSprite2D(&Hud_RingTimeLife, count % 100 / 10, 22046.496f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
+	Hud_RingTimeLife.p.x += 16.0f;
+	late_DrawSprite2D(&Hud_RingTimeLife, count % 10, 22046.496f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
+	Hud_RingTimeLife.p = backup;
+}
+
 void DrawHud()
 {
 	ScaleUI(uiscale::Align_Automatic);
 
 	SetSpriteParam();
 
+	DrawTagLeftHud();
 	DrawSprayHud();
 	DrawTimerHud();
 
@@ -101,7 +130,7 @@ void initHud()
 	LoadPVM("tagHud", &tagHudTexlist);
 }
 
-void LoadLevelObj_r() 
+void LoadLevelObj_r()
 {
 	LoadLevelObj_t.Original();
 	initHud();

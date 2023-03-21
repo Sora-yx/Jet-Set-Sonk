@@ -5,6 +5,7 @@ static NJS_TEXNAME timeOverTex[3];
 NJS_TEXLIST timeOverTexlist = { arrayptrandlength(timeOverTex) };
 extern int16_t timerHM;
 extern int16_t saveTimerHM;
+extern int16_t saveTimerHMReset;
 
 
 void backupTime()
@@ -96,6 +97,7 @@ void TimeOverDisp(task* tp)
 
 void ResetLevel()
 {
+	timerHM = saveTimerHMReset;
 	Set0Rings();
 	PauseEnabled = 0;
 	ResetTime();

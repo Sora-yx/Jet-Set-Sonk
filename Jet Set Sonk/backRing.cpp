@@ -88,7 +88,6 @@ void BackRing(task* tp)
 
 			useBackRing = true;
 			CreateElementalTask(LoadObj_Data1, 1, FadeoutScreen);
-			//backRingSaveData();
 			twp->mode++;
 		}
 		break;

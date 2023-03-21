@@ -6,6 +6,7 @@ HelperFunctions HelperFunctionsGlobal;
 std::string modpath;
 std::string modName = "";
 bool isAccessoryMod = false;
+bool isHudPlus = false;
 
 extern "C" {
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
@@ -20,6 +21,7 @@ extern "C" {
 		}
 
 		isAccessoryMod = GetModuleHandle(L"CustomCharacters") != nullptr;
+		isHudPlus = GetModuleHandle(L"sadx-hud-plus") != nullptr;
 
 		HelperFunctionsGlobal = helperFunctions; // Save the helper pointer for external use
 		modpath = path;

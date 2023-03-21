@@ -16,6 +16,8 @@ extern bool hardMode;
 extern HelperFunctions HelperFunctionsGlobal;
 
 extern bool isAccessoryMod;
+extern bool isHudPlus;
+extern Buttons tagBtn;
 
 void init_chrModel();
 void SonicJVList();

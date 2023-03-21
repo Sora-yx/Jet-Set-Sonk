@@ -266,7 +266,7 @@ bool isTailsAI(uint8_t pnum)
 
 bool isTagLevel()
 {
-	return CurrentLevel == LevelIDs_SpeedHighway;
+	return CurrentLevel == LevelIDs_SpeedHighway && tagLvl;
 }
 
 void FadeoutScreen(task* obj)
