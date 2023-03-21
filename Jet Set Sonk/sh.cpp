@@ -16,7 +16,8 @@ extern int16_t timerHM;
 extern int16_t saveTimerHM;
 extern int16_t saveTimerHMReset;
 
-static FunctionHook<void, int> RunLevelDestructor_t(RunLevelDestructor);
+
+static Trampoline* RunLevelDestructor_t = nullptr;
 
 StartPosition SH1Pos = { LevelIDs_SpeedHighway, 1, {-220, 42, 0}, 0 };
 
@@ -278,7 +279,8 @@ void __cdecl RunLevelDestructor_r(int heap)
 		SH_ResetAllData();
 	}
 
-	RunLevelDestructor_t.Original(heap);
+	FunctionPointer(void, origin, (int heap), RunLevelDestructor_t->Target());
+	origin(heap);
 }
 
 void init_SH()
@@ -288,7 +290,9 @@ void init_SH()
 
 	RoundMasterList[LevelIDs_SpeedHighway] = Rd_Highway_r;
 	HelperFunctionsGlobal.RegisterStartPosition(Characters_Sonic, SH1Pos);
-	RunLevelDestructor_t.Hook(RunLevelDestructor_r);
+
+	//func hook seems to conflict with DC Conversion
+	RunLevelDestructor_t = new Trampoline((intptr_t)RunLevelDestructor, (intptr_t)RunLevelDestructor + 0x6, RunLevelDestructor_r);
 
 	if (hardMode)
 	{
