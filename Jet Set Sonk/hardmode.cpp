@@ -95,9 +95,12 @@ void TimeOverDisp(task* tp)
 	ResetScaleUI();
 }
 
+extern task* TimeOverPtr;
 void ResetLevel()
 {
-
+	if (TimeOverPtr)
+		FreeTask(TimeOverPtr);
+	TimeOverPtr = nullptr;
 	timerHM = saveTimerHMReset;
 	Set0Rings();
 	PauseEnabled = 0;
@@ -111,6 +114,7 @@ void ResetLevel()
 	GameState = CurrentAct == 0 ? 0xc : 21;
 }
 
+static uint8_t secCount = 0;
 void TimeOver(task* tp)
 {
 	auto twp = tp->twp;
@@ -122,8 +126,15 @@ void TimeOver(task* tp)
 		twp->mode++;
 		break;
 	case 1:
-		if (FrameCounterUnpaused % 60 == 0 && TimeThing)
-			timerHM--;
+		if (TimeThing)
+		{
+			if (FrameCounterUnpaused % 60 == 0)
+			{
+				timerHM--;
+				secCount = 0;
+			}
+		}
+		
 
 		if (timerHM <= 0)
 		{
@@ -167,7 +178,7 @@ void TimeOver(task* tp)
 		{
 			if (GameMode == GameModes_Trial)
 			{
-				SoftResetByte = 1;
+				StartLevelCutscene(1);
 				FreeTask(tp);
 			}
 			else
@@ -189,6 +200,7 @@ void TimeOver(task* tp)
 			{
 				PlayMenuEnterSound();
 				ResetLevel();
+				FreeTask(tp);
 				return;
 			}
 		}
@@ -202,7 +214,7 @@ void TimeOver(task* tp)
 			else if (PressedButtons[0] & (Buttons_A | Buttons_Start))
 			{
 				PlayMenuBackSound();
-				SoftResetByte = 1;
+				StartLevelCutscene(1);
 				FreeTask(tp);
 				return;
 			}
