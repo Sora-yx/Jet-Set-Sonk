@@ -9,10 +9,25 @@
 	<Property name="hardMode" display="Hard Mode" type="bool" defaultvalue="False">
 				<HelpText>Enable Hard Mode for the Tag level; spray paint will be limited, number of tags to do increased and your time limited.</HelpText>
 			</Property>	
+			
+				<Property name="tagBtn" display="Tag Button" type="Buttons" defaultvalue="0">
+				<HelpText>Set the button to do some vandalism in the streets.</HelpText>
+			</Property>	
 
 	  </Group>
 	  
 		</Groups>
 		
+	<Enums>
+
+		<Enum name="Buttons">
+      <EnumMember name="0" display="Y" />
+      <EnumMember name="1" display="RB / R1" />
+	  <EnumMember name="2" display="LB / L1" />
+	  	  <EnumMember name="3" display="Back / Share" />
+
+    </Enum>
+		
+	</Enums>
 
 </ConfigSchema>
