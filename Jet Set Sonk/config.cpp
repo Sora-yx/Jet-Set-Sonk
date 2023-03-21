@@ -55,6 +55,9 @@ void ReadInfo(const char* path, const HelperFunctions& helperFunction)
 	if (timerHM > 999)
 		timerHM = 999;
 
+	if (timerHM <= 20)
+		timerHM = 100;
+
 	saveTimerHM = timerHM;
 	saveTimerHMReset = timerHM;
 
