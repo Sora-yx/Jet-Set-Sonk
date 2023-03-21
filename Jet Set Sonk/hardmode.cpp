@@ -97,6 +97,7 @@ void TimeOverDisp(task* tp)
 
 void ResetLevel()
 {
+
 	timerHM = saveTimerHMReset;
 	Set0Rings();
 	PauseEnabled = 0;
@@ -107,7 +108,7 @@ void ResetLevel()
 	ResetGravity();
 	CurrentLevel = LevelCopy;
 	CurrentAct = ActCopy;
-	GameState = 21;
+	GameState = CurrentAct == 0 ? 0xc : 21;
 }
 
 void TimeOver(task* tp)
@@ -164,7 +165,16 @@ void TimeOver(task* tp)
 	case 4:
 		if (++twp->wtimer == 60)
 		{
-			twp->mode++;
+			if (GameMode == GameModes_Trial)
+			{
+				SoftResetByte = 1;
+				FreeTask(tp);
+			}
+			else
+			{
+				twp->mode++;
+			}
+
 		}
 		break;
 	case 5:
