@@ -50,7 +50,11 @@ void DrawTimerHud()
 
 	if (!timerHM)
 	{
-		late_DrawSprite2D(&tagTimer, timerHM, 22046.496f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
+		float diff = 36.0f;
+		tagTimer.p.x += diff;
+		late_DrawSprite2D(&tagTimer, 0, 22046.496f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
+		tagTimer.p.x += diff;
+		late_DrawSprite2D(&tagTimer, 0, 22046.496f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
 		return;
 	}
 

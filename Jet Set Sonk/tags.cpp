@@ -370,9 +370,9 @@ void OutTag_Disp(task* tp)
 
 	njSetTexture(&graffitiTexlist);
 	njPushMatrix(0);
-	Float Y = GetShadowPos(twp->pos.x, twp->pos.y + 4.0f, twp->pos.z, &ang);
-	Y += 0.007f;
-	njTranslate(0, twp->pos.x, Y, twp->pos.z);
+	const Float Y = GetShadowPos(twp->pos.x, twp->pos.y + 4.0f, twp->pos.z, &ang);
+
+	njTranslate(0, twp->pos.x, Y + 0.009f, twp->pos.z);
 	njRotateZ(0, ang.z);
 	njRotateX(0, ang.x);
 	njRotateY(0, -(ang.y));

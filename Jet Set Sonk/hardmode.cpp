@@ -95,12 +95,14 @@ void TimeOverDisp(task* tp)
 	ResetScaleUI();
 }
 
+void SH_ResetAllData();
 extern task* TimeOverPtr;
+uint8_t backupGameMode = 9;
 void ResetLevel()
 {
 	if (TimeOverPtr)
 		FreeTask(TimeOverPtr);
-	TimeOverPtr = nullptr;
+
 	timerHM = saveTimerHMReset;
 	Set0Rings();
 	PauseEnabled = 0;
@@ -109,12 +111,26 @@ void ResetLevel()
 	ResetBigStuff();
 	ResetRestartData();
 	ResetGravity();
-	CurrentLevel = LevelCopy;
-	CurrentAct = ActCopy;
-	GameState = CurrentAct == 0 ? 0xc : 21;
+	SH_ResetAllData();
+
+	if (!CurrentAct)
+	{
+		GameState = 0xc;
+	}		
+	else
+	{
+		backupGameMode = (uint8_t)GameMode;
+		GameMode = GameModes_Adventure_Field;
+		GameState = 0xB;
+	}
 }
 
-static uint8_t secCount = 0;
+static void DeleteTimeOver(task* tp)
+{
+	TimeOverPtr = nullptr;
+}
+
+
 void TimeOver(task* tp)
 {
 	auto twp = tp->twp;
@@ -122,7 +138,13 @@ void TimeOver(task* tp)
 	switch (twp->mode)
 	{
 	case 0:
+
+		tp->dest = DeleteTimeOver;
 		tp->disp = TimeOverDisp;
+
+		if ((uint8_t)GameMode == (uint8_t)GameModes_Adventure_Field)
+			GameMode = (GameModes)backupGameMode;
+
 		twp->mode++;
 		break;
 	case 1:
@@ -130,15 +152,16 @@ void TimeOver(task* tp)
 		{
 			if (FrameCounterUnpaused % 60 == 0)
 			{
-				timerHM--;
-				secCount = 0;
+				if (timerHM > 0)
+					timerHM--;
 			}
 		}
 		
 
 		if (timerHM <= 0)
 		{
-			twp->mode++;
+			if (FrameCounterUnpaused % 70 == 0)
+				twp->mode++;
 		}
 
 		break;
